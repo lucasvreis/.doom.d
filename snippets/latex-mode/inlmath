@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: inlmath
+# binding: M-m
+# --
+\\\( $0 \\\)

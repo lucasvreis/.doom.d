@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: lrparen
+# key: @)
+# --
+\\left($1\\right)$0

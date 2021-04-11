@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: bigsquarebrackets
+# key: @sb
+# --
+\\left[$1\\right]$0

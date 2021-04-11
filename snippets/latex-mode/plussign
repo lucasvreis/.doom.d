@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: plus
+# binding: +
+# condition: (texmathp)
+# --
+ + 

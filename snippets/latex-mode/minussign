@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: upscript
-# binding: ^
+# name: minussign
+# binding: -
 # condition: (texmathp)
 # --
-^{$1}$0
+ - 

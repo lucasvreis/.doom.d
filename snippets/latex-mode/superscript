@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
-# name: subscript
-# binding: _
+# name: superscript
+# binding: ^
 # condition: (texmathp)
 # --
-${1:$(when (> (length yas-text) 0) "_")
+${1:$(when (> (length yas-text) 0) "^")
 }${1:$(when (> (length yas-text) 1) "{")
 }${1:i}${1:$(when (> (length yas-text) 1) "}")}

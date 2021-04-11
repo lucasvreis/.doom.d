@@ -2,6 +2,7 @@
 # name: dispmath
 # expand-env: ( (yas-also-auto-indent-first-line t) )
 # binding: M-M
+# condition: (not (texmathp))
 # --
 `()`
 \\[ $1 \\]

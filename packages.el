@@ -29,25 +29,28 @@
 ;
 (package! scroll-restore)
 (package! dtrt-indent)
-(package! company-lsp)
-(package! fira-code-mode)
+(package! frames-only-mode)
 
 ;; julia mode
 (package! julia-vterm)
-(package! lsp-julia)
-(package! julia-repl)
+(unpin! lsp-julia)
+(unpin! julia-mode)
+(unpin! julia-repl)
 
 ;; latex
 (package! latex-preview-pane)
+(package! aas :recipe (:host github :repo "ymarco/auto-activating-snippets"))
+(package! laas :recipe (:host github :repo "tecosaur/LaTeX-auto-activating-snippets"))
 
 ;; doom
-(package! centaur-tabs :disable t)
-(package! tab-jump-out)
 (package! ispell :disable t)
 (package! windsize)
 (package! good-scroll)
-
-(package! gcmh)
+(package! frame-workflow :recipe (:host github :repo "akirak/frame-workflow"))
 (package! undo-tree :recipe (:host gitlab :repo "tsc25/undo-tree"))
 (package! smooth-scrolling)
-(package! tao-theme)
+
+(package! org-krita
+  :recipe (:host github
+           :repo "lepisma/org-krita"
+           :files ("resources" "resources" "*.el" "*.el")))

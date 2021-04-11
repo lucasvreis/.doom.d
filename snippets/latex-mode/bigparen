@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: lrparen
-# key: @)
+# name: bigparen
+# key: @p
 # --
 \\left($1\\right)$0

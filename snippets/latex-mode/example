@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: example
+# uuid: 
+# key: expl
+# condition: (not (texmathp))
+# --
+\begin{example}
+$1
+\end{example}
+$0

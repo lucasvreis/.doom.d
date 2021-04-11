@@ -1,9 +1,8 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-;;;
+;;; -*- eval: (flycheck-mode -1); -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
-
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
@@ -23,15 +22,30 @@
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
 
+(setq doom-font (font-spec :family "VictorMono Nerd Font Mono" :size 20 :weight 'semi-bold)
+      doom-variable-pitch-font (font-spec :family "VictorMono Nerd Font" :size 20)
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :weight 'normal))
+
+(setq all-the-icons-scale-factor 0.8)
+
+(custom-set-faces!
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant oblique))
+
+;; Hand-picked Unicode characters
+(add-hook! 'after-setting-font-hook
+  (set-fontset-font t 'unicode (font-spec :family "victormono nerd font mono"))
+  (set-fontset-font t 'unicode (font-spec :family "DejaVu sans mono") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "DejaVu sans") nil 'append)
+  (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
+
+
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-material)
-(setq doom-font (font-spec :family "Fira Code" :size 20))
-(set-fontset-font "fontset-default" 'unicode "Twemoji" nil 'prepend)
-(set-fontset-font "fontset-default" nil (font-spec :name "DejaVu Sans"))
 
-;; Unicode characters
+(setq doom-theme 'doom-tomorrow-night)
+
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -39,8 +53,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-;; (setq display-line-numbers-type 'relative)
-
+(setq display-line-numbers-type 'relative)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -61,30 +74,32 @@
 
 (load! "lisp/julia")
 (load! "lisp/latex")
+(load! "lisp/yasnippet")
 
-;; Fira Code
-(when (display-graphic-p)
-  (use-package fira-code-mode
-    :custom (fira-code-mode-disabled-ligatures '("[]" "x" "*" ":" "+"))  ; ligatures you don't want
-    :hook prog-mode))
+(require 'org)
+(org-babel-load-file "~/.doom.d/bindings.org")
 
-
-
-(add-hook 'change-major-mode-hook (lambda () (pixel-scroll-mode -1)))
-
-(general-define-key :keymaps 'lean-mode-map (kbd "M-.") 'lean-find-definition)
-(general-define-key :states 'normal :keymaps 'override (kbd "C-<tab>") 'ivy-switch-buffer)
-
+(remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
 
 ;; Maximize window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+(good-scroll-mode +1)
+(scroll-restore-mode +1)
+(pcre-mode +1)
 (setq vterm-shell "fish")
 (setq evil-cross-lines t)
-(menu-bar-mode t)
-(good-scroll-mode t)
+(setq good-scroll-step 100)
+(setq ispell-dictionary "brasileiro")
+(setq yas-triggers-in-field t)
+(setq delete-by-moving-to-trash t)
+(setq lsp-idle-delay 0.1)
+(setq company-idle-delay 0.1)
 
-(general-define-key :states 'normal :keymaps 'override (kbd "C-S-<left>") 'windsize-left)
-(general-define-key :states 'normal :keymaps 'override (kbd "C-S-<right>") 'windsize-right)
-(general-define-key :states 'normal :keymaps 'override (kbd "C-S-<up>") 'windsize-up)
-(general-define-key :states 'normal :keymaps 'override (kbd "C-S-<down>") 'windsize-down)
+;; Treemacs
+(setq +treemacs-git-mode 'deferred)
+(setq treemacs-width 26)
+
+(use-package! org-krita
+  :config
+  (add-hook 'org-mode-hook 'org-krita-mode))

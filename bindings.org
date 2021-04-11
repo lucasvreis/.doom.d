@@ -1,0 +1,38 @@
+#+TITLE: Atalhos
+
+* Emacs in general
+** =god-mode=
+Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confortáveis, como =ç c ;= para alternar o modo comentário em uma linha.
+
+#+begin_src emacs-lisp
+(map! :m "ç" 'god-execute-with-current-bindings)
+(map! :i "C-ç" 'god-execute-with-current-bindings)
+#+end_src
+
+# ** Circulando entre os buffers
+# Circula entre os buffers com =M-<tab>= e =M-S-<tab>=.
+
+# #+begin_src emacs-lisp
+# (map! "M-<tab>" #'next-buffer)
+# (map! "M-<iso-lefttab>" #'previous-buffer)
+# #+end_src
+
+** Tamanho das janelas
+#+begin_src emacs-lisp
+(map! "M-S-<right>" 'windsize-right)
+(map! "M-S-<left>" 'windsize-left)
+(map! "M-S-<down>" 'windsize-down)
+(map! "M-S-<up>" 'windsize-up)
+#+end_src
+
+** Drag stuff
+#+begin_src emacs-lisp
+(map! "M-J" 'drag-stuff-down)
+(map! "M-K" 'drag-stuff-up)
+#+end_src
+
+
+* LEAN
+#+begin_src emacs-lisp
+(general-define-key :keymaps 'lean-mode-map (kbd "M-.") 'lean-find-definition)
+#+end_src

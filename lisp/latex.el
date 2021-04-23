@@ -36,6 +36,7 @@
                 t t)))
   ;; (load-theme 'tao-yang :no-confirm nil)
   (LaTeX-math-mode +1)
+  (hl-todo-mode +1)
   (delete '("∈" ("in")) LaTeX-fold-math-spec-list)
   (auto-fill-mode +1)
   (+word-wrap-mode +1))
@@ -77,7 +78,7 @@
 (setq TeX-fold-math-spec-list
       '(("ℝ"
          ("RR" "Reals"))
-        ("∈ \[[1]\]||∈ \((1)\]"
+        ("∈ \[[1]\]||∈"
          ("in"))
         ("√\{{1}\}||√"
          ("sqrt"))

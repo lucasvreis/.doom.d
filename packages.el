@@ -29,13 +29,12 @@
 ;
 (package! scroll-restore)
 (package! dtrt-indent)
-(package! frames-only-mode)
 
 ;; julia mode
 (package! julia-vterm)
 (unpin! lsp-julia)
 (unpin! julia-mode)
-(unpin! julia-repl)
+
 
 ;; latex
 (package! latex-preview-pane)
@@ -49,8 +48,6 @@
 (package! frame-workflow :recipe (:host github :repo "akirak/frame-workflow"))
 (package! undo-tree :recipe (:host gitlab :repo "tsc25/undo-tree"))
 (package! smooth-scrolling)
+(package! mixed-pitch)
 
-(package! org-krita
-  :recipe (:host github
-           :repo "lepisma/org-krita"
-           :files ("resources" "resources" "*.el" "*.el")))
+(package! lsp-treemacs)

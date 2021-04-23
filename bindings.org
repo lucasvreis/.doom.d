@@ -27,8 +27,8 @@ Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confort√°veis, como =√
 
 ** Drag stuff
 #+begin_src emacs-lisp
-(map! "M-J" 'drag-stuff-down)
-(map! "M-K" 'drag-stuff-up)
+(map! "M-j" 'drag-stuff-down)
+(map! "M-k" 'drag-stuff-up)
 #+end_src
 
 

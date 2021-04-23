@@ -1,0 +1,7 @@
+#+TITLE: Config
+
+* Emacs em geral
+* =company-mode=
+#+begin_src emacs-lisp
+(setq company-tooltip-maximum-width 180)
+#+end_src

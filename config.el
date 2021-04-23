@@ -22,8 +22,8 @@
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
 
-(setq doom-font (font-spec :family "VictorMono Nerd Font Mono" :size 20 :weight 'semi-bold)
-      doom-variable-pitch-font (font-spec :family "VictorMono Nerd Font" :size 20)
+(setq doom-font (font-spec :family "JetBrains Mono" :size 16 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "Noto Sans")
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :weight 'normal))
 
 (setq all-the-icons-scale-factor 0.8)
@@ -34,7 +34,7 @@
 
 ;; Hand-picked Unicode characters
 (add-hook! 'after-setting-font-hook
-  (set-fontset-font t 'unicode (font-spec :family "victormono nerd font mono"))
+  (set-fontset-font t 'unicode (font-spec :family "JetBrains Mono"))
   (set-fontset-font t 'unicode (font-spec :family "DejaVu sans mono") nil 'append)
   (set-fontset-font t 'unicode (font-spec :family "DejaVu sans") nil 'append)
   (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
@@ -44,7 +44,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-(setq doom-theme 'doom-tomorrow-night)
+(setq doom-theme 'doom-spacegrey)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -53,7 +53,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+;; (setq display-line-numbers-type 'relative)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -78,18 +78,17 @@
 
 (require 'org)
 (org-babel-load-file "~/.doom.d/bindings.org")
+(org-babel-load-file "~/.doom.d/configuration.org")
 
 (remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
 
 ;; Maximize window
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-(good-scroll-mode +1)
-(scroll-restore-mode +1)
 (pcre-mode +1)
+(solaire-global-mode -1)
 (setq vterm-shell "fish")
 (setq evil-cross-lines t)
-(setq good-scroll-step 100)
 (setq ispell-dictionary "brasileiro")
 (setq yas-triggers-in-field t)
 (setq delete-by-moving-to-trash t)
@@ -100,6 +99,6 @@
 (setq +treemacs-git-mode 'deferred)
 (setq treemacs-width 26)
 
-(use-package! org-krita
-  :config
-  (add-hook 'org-mode-hook 'org-krita-mode))
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq scroll-step 1) ;; keyboard scroll one line at a time

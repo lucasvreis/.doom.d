@@ -6,7 +6,7 @@
 (map! "M-S-<down>" 'windsize-down)
 (map! "M-S-<up>" 'windsize-up)
 
-(map! "M-J" 'drag-stuff-down)
-(map! "M-K" 'drag-stuff-up)
+(map! "M-j" 'drag-stuff-down)
+(map! "M-k" 'drag-stuff-up)
 
 (general-define-key :keymaps 'lean-mode-map (kbd "M-.") 'lean-find-definition)

@@ -44,7 +44,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-(setq doom-theme 'doom-spacegrey)
+(setq doom-theme 'doom-challenger-deep)
 
 
 ;; If you use `org' and don't want your org files in the default location below,
@@ -86,7 +86,6 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (pcre-mode +1)
-(solaire-global-mode -1)
 (setq vterm-shell "fish")
 (setq evil-cross-lines t)
 (setq ispell-dictionary "brasileiro")
@@ -98,6 +97,7 @@
 ;; Treemacs
 (setq +treemacs-git-mode 'deferred)
 (setq treemacs-width 26)
+(setq doom-themes-treemacs-enable-variable-pitch nil)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling

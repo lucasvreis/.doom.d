@@ -34,7 +34,7 @@
 (package! julia-vterm)
 (unpin! lsp-julia)
 (unpin! julia-mode)
-
+(package! julia-repl :disable t)
 
 ;; latex
 (package! latex-preview-pane)
@@ -49,5 +49,9 @@
 (package! undo-tree :recipe (:host gitlab :repo "tsc25/undo-tree"))
 (package! smooth-scrolling)
 (package! mixed-pitch)
+(package! nyan-mode)
+(package! centered-window)
+(package! golden-ratio)
 
 (package! lsp-treemacs)
+(unpin! company-box)

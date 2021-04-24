@@ -1,21 +1,21 @@
 #+TITLE: Atalhos
 
-* Emacs in general
+* Emacs em geral
+
+Afeta todos os modos.
+
+** Salvando e procurando com i-search
+#+begin_src emacs-lisp
+(map! "C-S-s" 'isearch-forward)
+(map! "C-s" 'save-buffer)
+#+end_src
+
 ** =god-mode=
 Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confortáveis, como =ç c ;= para alternar o modo comentário em uma linha.
-
 #+begin_src emacs-lisp
 (map! :m "ç" 'god-execute-with-current-bindings)
 (map! :i "C-ç" 'god-execute-with-current-bindings)
 #+end_src
-
-# ** Circulando entre os buffers
-# Circula entre os buffers com =M-<tab>= e =M-S-<tab>=.
-
-# #+begin_src emacs-lisp
-# (map! "M-<tab>" #'next-buffer)
-# (map! "M-<iso-lefttab>" #'previous-buffer)
-# #+end_src
 
 ** Tamanho das janelas
 #+begin_src emacs-lisp
@@ -31,6 +31,10 @@ Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confortáveis, como =�
 (map! "M-k" 'drag-stuff-up)
 #+end_src
 
+** Ativa/desativa abas
+#+begin_src emacs-lisp
+(map! :leader :desc "Toggle centaur tabs" "t t" 'centaur-tabs-local-mode)
+#+end_src
 
 * LEAN
 #+begin_src emacs-lisp

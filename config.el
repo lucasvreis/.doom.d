@@ -22,7 +22,7 @@
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
 
-(setq doom-font (font-spec :family "JetBrains Mono" :size 16 :weight 'normal)
+(setq doom-font (font-spec :family "JetBrains Mono" :size 17 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Noto Sans")
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :weight 'normal))
 
@@ -91,8 +91,8 @@
 (setq ispell-dictionary "brasileiro")
 (setq yas-triggers-in-field t)
 (setq delete-by-moving-to-trash t)
-(setq lsp-idle-delay 0.1)
-(setq company-idle-delay 0.1)
+(setq lsp-idle-delay 0.01)
+(setq company-idle-delay 0.01)
 
 ;; Treemacs
 (setq +treemacs-git-mode 'deferred)

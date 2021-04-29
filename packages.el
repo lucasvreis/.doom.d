@@ -54,4 +54,7 @@
 (package! golden-ratio)
 
 (package! lsp-treemacs)
+(package! fasd :recipe (:host github :repo "emacsmirror/fasd"))
+(package! aggressive-indent)
 (unpin! company-box)
+(unpin! centaur-tabs)

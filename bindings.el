@@ -13,5 +13,9 @@
 (map! "M-k" 'drag-stuff-up)
 
 (map! :leader :desc "Toggle centaur tabs" "t t" 'centaur-tabs-local-mode)
+(map! :gnvi "C-<tab>" 'centaur-tabs-forward
+      :g "C-<iso-lefttab>" 'centaur-tabs-backward)
 
-(general-define-key :keymaps 'lean-mode-map (kbd "M-.") 'lean-find-definition)
+(map! :map 'lean-mode-map "M-." 'lean-find-definition)
+
+(map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)

@@ -82,9 +82,6 @@
 
 (remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
 
-;; Maximize window
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
-
 (pcre-mode +1)
 (setq vterm-shell "fish")
 (setq evil-cross-lines t)
@@ -95,9 +92,6 @@
 (setq company-idle-delay 0.01)
 
 ;; Treemacs
-(setq +treemacs-git-mode 'deferred)
-(setq treemacs-width 26)
-(setq doom-themes-treemacs-enable-variable-pitch nil)
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling

@@ -17,7 +17,7 @@ Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confort√°veis, como =√
 (map! :i "C-√ß" 'god-execute-with-current-bindings)
 #+end_src
 
-** Tamanho das janelas
+** Tamanho das janelas (=windsize=)
 #+begin_src emacs-lisp
 (map! "M-S-<right>" 'windsize-right)
 (map! "M-S-<left>" 'windsize-left)
@@ -31,12 +31,21 @@ Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confort√°veis, como =√
 (map! "M-k" 'drag-stuff-up)
 #+end_src
 
-** Ativa/desativa abas
+** Abas (=centaur-tabs=)
 #+begin_src emacs-lisp
 (map! :leader :desc "Toggle centaur tabs" "t t" 'centaur-tabs-local-mode)
+(map! :gnvi "C-<tab>" 'centaur-tabs-forward
+      :g "C-<iso-lefttab>" 'centaur-tabs-backward)
 #+end_src
 
-* LEAN
+* Lean
 #+begin_src emacs-lisp
-(general-define-key :keymaps 'lean-mode-map (kbd "M-.") 'lean-find-definition)
+(map! :map 'lean-mode-map "M-." 'lean-find-definition)
+#+end_src
+
+
+* LaTeX
+** Salva + Compila
+#+begin_src emacs-lisp
+(map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
 #+end_src

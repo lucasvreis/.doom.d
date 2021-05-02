@@ -22,8 +22,8 @@
        :completion
        (company +tng)           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
-       ;;ido               ; the other *other* search engine...
-       ivy               ; a search engine for love and life
+       ;; ido               ; the other *other* search engine...
+       (ivy +fuzzy +prescient +childframe +icons)               ; a search engine for love and life
 
        :ui
        deft            ; notational velocity for Emacs
@@ -40,7 +40,7 @@
        modeline          ; snazzy, Atom-inspired modeline, plus AP
        nav-flash         ; blink cursor line after big motions
        ;; neotree           ; a project drawer, like NERDTree for vim
-       ophints           ; highlight the region an operation acts on
+       ;; ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
@@ -61,15 +61,15 @@
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        (parinfer +rust)          ; turn lisp into python, sort of
-       rotate-text       ; cycle region at point between text candidates
+       ;; rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
        word-wrap         ; soft wrapping with -aware indent
 
        :emacs
-       dired             ; making dired pretty [functional]
+       (dired +ranger +icons)             ; making dired pretty [functional]
        electric          ; smarter, keyword-based electric-indent
-       ;;ibuffer         ; interactive buffer management
-       undo              ; persistent, smarter undo for your inevitable mistakes
+       (ibuffer +icons)         ; interactive buffer management
+       (undo +tree)              ; persistent, smarter undo for your inevitable mistakes
        vc                ; version-control and Emacs, sitting in a tree
 
        :term
@@ -139,7 +139,7 @@
        (julia +lsp)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +fold +lsp +latexmk)             ; writing papers in Emacs has never been so fun
-       lean
+       ;; lean
        ;;factor
        ;;ledger            ; an accounting system in Emacs
        ;;lua               ; one-based indices? one-based indices
@@ -175,11 +175,15 @@
        ;;(wanderlust +gmail)
 
        :app
-       calendar
+       ;; calendar
        ;;irc               ; how neckbeards socialize
-       (rss +org)        ; emacs as an RSS reader
+       ;; (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
        ;;literate
        (default +bindings +smartparens))
+
+(when doom-debug-p
+  (require 'benchmark-init)
+  (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))

@@ -1,7 +1,7 @@
 # key: nil
 # name: dispmath
 # expand-env: ( (yas-also-auto-indent-first-line t) )
-# binding: M-M
+# binding: M-D
 # condition: (not (texmathp))
 # --
 `()`

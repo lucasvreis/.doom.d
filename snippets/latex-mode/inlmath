@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: inlmath
-# binding: M-m
+# binding: M-I
 # --
 \\\($1\\\) $0

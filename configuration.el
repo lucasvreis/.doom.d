@@ -1,3 +1,35 @@
+(when (display-graphic-p)
+  (setq good-scroll-duration 0.08)
+  (good-scroll-mode 1))
+
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+;; (use-package! selectrum
+;;   :hook (doom-first-input . selectrum-mode))
+
+;; (use-package! selectrum-prescient
+;;   :after selectrum
+;;   :config (selectrum-prescient-mode))
+
+;; (use-package! marginalia
+;;   :after selectrum
+;;   :config
+;;   (marginalia-mode)
+;;   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+
+(use-package! embark
+  :after ivy
+  :bind (:map minibuffer-local-map
+         ("C-o" . embark-act)
+         :map embark-file-map
+         ("j" . dired-jump)))
+
+;; (setq projectile-completion-system 'default)
+
 (setq +zen-text-scale 1)
 
 (setq window-divider-default-bottom-width 2  ; default is 1
@@ -32,4 +64,4 @@
       doom-themes-treemacs-bitmap-indicator-width 1
       doom-themes-treemacs-enable-variable-pitch nil)
 
-(aggressive-indent-global-mode +1)
+;; (aggressive-indent-global-mode +1)

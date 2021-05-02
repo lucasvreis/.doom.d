@@ -1,8 +1,94 @@
 #+TITLE: Config
 
+* O básico
+#+begin_src emacs-lisp
+(setq user-full-name "Lucas Viana Reis"
+      user-mail-address "l240191@dac.unicamp.br"
+
+      doom-theme 'doom-challenger-deep
+
+      doom-font (font-spec :family "JetBrains Mono" :size 17 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "Noto Sans")
+      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :weight 'normal))
+
+(setq all-the-icons-scale-factor 1)
+
+(custom-set-faces!
+  '(font-lock-comment-face :slant italic)
+  '(font-lock-keyword-face :slant oblique))
+
+;; Hand-picked Unicode characters
+(add-hook! 'after-setting-font-hook
+  (set-fontset-font t 'unicode (font-spec :family "JetBrains Mono"))
+  (set-fontset-font t 'unicode (font-spec :family "DejaVu sans mono") nil 'append)
+  (set-fontset-font t 'unicode (font-spec :family "DejaVu sans") nil 'append)
+  (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
+
+(load! "lisp/julia")
+(load! "lisp/latex")
+(load! "lisp/yasnippet")
+#+end_src
+
+** Lixo: para organizar
+#+begin_src emacs-lisp
+(remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
+
+(pcre-mode +1)
+(setq vterm-shell "fish")
+(setq evil-cross-lines t)
+(setq ispell-dictionary "brasileiro")
+(setq yas-triggers-in-field t)
+(setq delete-by-moving-to-trash t)
+(setq lsp-idle-delay 0.01)
+(setq company-idle-delay 0.01)
+
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+#+end_src
+
 * Emacs em geral
 
 Afeta todos os modos.
+
+** Good-scroll
+#+begin_src emacs-lisp
+(when (display-graphic-p)
+  (setq good-scroll-duration 0.08)
+  (good-scroll-mode 1))
+#+end_src
+** Tree-sitter
+#+begin_src emacs-lisp
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+#+end_src
+** Selectrum
+#+begin_src emacs-lisp
+;; (use-package! selectrum
+;;   :hook (doom-first-input . selectrum-mode))
+
+;; (use-package! selectrum-prescient
+;;   :after selectrum
+;;   :config (selectrum-prescient-mode))
+
+;; (use-package! marginalia
+;;   :after selectrum
+;;   :config
+;;   (marginalia-mode)
+;;   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+
+(use-package! embark
+  :after ivy
+  :bind (:map minibuffer-local-map
+         ("C-o" . embark-act)
+         :map embark-file-map
+         ("j" . dired-jump)))
+
+;; (setq projectile-completion-system 'default)
+#+end_src
 
 ** Zen
 #+begin_src emacs-lisp
@@ -55,5 +141,5 @@ Afeta todos os modos.
 #+end_src
 ** Aggressive-indent
 #+begin_src emacs-lisp
-(aggressive-indent-global-mode +1)
+;; (aggressive-indent-global-mode +1)
 #+end_src

@@ -26,15 +26,15 @@
 ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
-;
+
+
 (package! scroll-restore)
-(package! dtrt-indent)
 
 ;; julia mode
 (package! julia-vterm)
+(package! julia-repl :disable t)
 (unpin! lsp-julia)
 (unpin! julia-mode)
-(package! julia-repl :disable t)
 
 ;; latex
 (package! latex-preview-pane)
@@ -45,16 +45,22 @@
 (package! ispell :disable t)
 (package! windsize)
 (package! good-scroll)
-(package! frame-workflow :recipe (:host github :repo "akirak/frame-workflow"))
-(package! undo-tree :recipe (:host gitlab :repo "tsc25/undo-tree"))
+;; (package! frame-workflow :recipe (:host github :repo "akirak/frame-workflow"))
+;; (package! undo-tree :recipe (:host gitlab :repo "tsc25/undo-tree"))
 (package! smooth-scrolling)
 (package! mixed-pitch)
 (package! nyan-mode)
-(package! centered-window)
-(package! golden-ratio)
-
 (package! lsp-treemacs)
-(package! fasd :recipe (:host github :repo "emacsmirror/fasd"))
-(package! aggressive-indent)
+(package! benchmark-init)
+
+
+;; Selectrum
+(package! embark)
+
+;; Tree-sitter
+(package! tree-sitter)
+(package! tree-sitter-langs)
+
+
 (unpin! company-box)
 (unpin! centaur-tabs)

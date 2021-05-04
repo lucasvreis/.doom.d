@@ -1,11 +1,3 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-;;; -*- eval: (flycheck-mode -1); -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
 (setq user-full-name "Lucas Viana Reis"
       user-mail-address "l240191@dac.unicamp.br"
 
@@ -15,7 +7,7 @@
       doom-variable-pitch-font (font-spec :family "Noto Sans")
       doom-unicode-font (font-spec :family "DejaVu Sans Mono" :weight 'normal))
 
-(setq all-the-icons-scale-factor 0.8)
+(setq all-the-icons-scale-factor 1)
 
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
@@ -28,40 +20,9 @@
   (set-fontset-font t 'unicode (font-spec :family "DejaVu sans") nil 'append)
   (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
 
-
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-;; (setq display-line-numbers-type 'relative)
-
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
-
 (load! "lisp/julia")
 (load! "lisp/latex")
 (load! "lisp/yasnippet")
-
-(require 'org)
-(org-babel-load-file "~/.doom.d/bindings.org")
-(org-babel-load-file "~/.doom.d/configuration.org")
 
 (remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
 
@@ -69,13 +30,100 @@
 (setq vterm-shell "fish")
 (setq evil-cross-lines t)
 (setq ispell-dictionary "brasileiro")
-(setq yas-triggers-in-field t)
 (setq delete-by-moving-to-trash t)
 (setq lsp-idle-delay 0.01)
 (setq company-idle-delay 0.01)
 
-;; Treemacs
-
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq scroll-step 1) ;; keyboard scroll one line at a time
+
+(map! "C-S-s" 'isearch-forward)
+(map! "C-s" 'save-buffer)
+
+(map! :m "ç" 'god-execute-with-current-bindings)
+(map! :i "C-ç" 'god-execute-with-current-bindings)
+
+(map! "M-S-<right>" 'windsize-right)
+(map! "M-S-<left>" 'windsize-left)
+(map! "M-S-<down>" 'windsize-down)
+(map! "M-S-<up>" 'windsize-up)
+
+(map! "M-j" 'drag-stuff-down)
+(map! "M-k" 'drag-stuff-up)
+
+(map! :leader :desc "Toggle centaur tabs" "t t" 'centaur-tabs-local-mode)
+(map! :gnvi "C-<tab>" 'centaur-tabs-forward
+      :g "C-<iso-lefttab>" 'centaur-tabs-backward)
+
+(map! :map 'lean-mode-map "M-." 'lean-find-definition)
+
+(map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
+
+(when (display-graphic-p)
+  (setq good-scroll-duration 0.08)
+  (good-scroll-mode 1))
+
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+;; (use-package! selectrum
+;;   :hook (doom-first-input . selectrum-mode))
+
+;; (use-package! selectrum-prescient
+;;   :after selectrum
+;;   :config (selectrum-prescient-mode))
+
+;; (use-package! marginalia
+;;   :after selectrum
+;;   :config
+;;   (marginalia-mode)
+;;   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+
+(use-package! embark
+  :after ivy
+  :bind (:map minibuffer-local-map
+         ("C-o" . embark-act)
+         :map embark-file-map
+         ("j" . dired-jump)))
+
+;; (setq projectile-completion-system 'default)
+
+(setq +zen-text-scale 1)
+
+(setq window-divider-default-bottom-width 2  ; default is 1
+      window-divider-default-right-width 2)  ; default is 1
+
+;; (nyan-mode t)
+
+;; (defun company-yasnippet-or-completion ()
+;;   (interactive)
+;;   (let ((yas-fallback-behavior nil))
+;;     (unless (yas-expand)
+;;       (call-interactively #'company-complete-common))))
+
+;; (after! company
+;;   (add-hook 'company-mode-hook (lambda ())
+;;             (substitute-key-definition 'company-complete-common
+;;                                        'company-yasnippet-or-completion
+;;                                        company-active-map)))
+
+(setq centaur-tabs-style "bar"
+      centaur-tabs-set-bar nil
+      centaur-tabs-height 36
+      centaur-tabs-plain-icons t
+      centaur-tabs-label-fixed-length 10)
+
+(after! centaur-tabs
+  (centaur-tabs-group-by-projectile-project))
+
+(setq +treemacs-git-mode 'deferred
+      treemacs-width 26
+      doom-themes-treemacs-theme "doom-colors"
+      doom-themes-treemacs-bitmap-indicator-width 1
+      doom-themes-treemacs-enable-variable-pitch nil)
+
+;; (aggressive-indent-global-mode +1)

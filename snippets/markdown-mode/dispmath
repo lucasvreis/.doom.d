@@ -1,0 +1,7 @@
+# name: dispmath
+# expand-env: ( (yas-also-auto-indent-first-line t) )
+# binding: M-D
+# --
+`()`
+\\[ $1 \\]
+$0

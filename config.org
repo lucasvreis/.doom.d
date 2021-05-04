@@ -37,7 +37,6 @@
 (setq vterm-shell "fish")
 (setq evil-cross-lines t)
 (setq ispell-dictionary "brasileiro")
-(setq yas-triggers-in-field t)
 (setq delete-by-moving-to-trash t)
 (setq lsp-idle-delay 0.01)
 (setq company-idle-delay 0.01)
@@ -46,6 +45,8 @@
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 #+end_src
+
+#+include: bindings.org
 
 * Emacs em geral
 
@@ -122,7 +123,7 @@ Afeta todos os modos.
  #+end_src
 ** Centaur tabs
 #+begin_src emacs-lisp
-(setq centaur-tabs-style "wave"
+(setq centaur-tabs-style "bar"
       centaur-tabs-set-bar nil
       centaur-tabs-height 36
       centaur-tabs-plain-icons t

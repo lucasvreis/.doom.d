@@ -20,9 +20,40 @@
   (set-fontset-font t 'unicode (font-spec :family "DejaVu sans") nil 'append)
   (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
 
-(load! "lisp/julia")
-(load! "lisp/latex")
-(load! "lisp/yasnippet")
+(setq olivetti-body-width 100)
+(add-hook! '(latex-mode-hook org-mode-hook text-mode-hook) #'olivetti-mode)
+
+(load! "lisp/major/text-modes")
+(after! julia-mode (load! "lisp/major/julia"))
+(after! latex      (load! "lisp/major/latex"))
+(after! org        (load! "lisp/major/org"))
+(after! treemacs   (load! "lisp/major/treemacs"))
+(after! yasnippet  (load! "lisp/minor/yasnippet"))
+(after! impatient  (load! "lisp/minor/impatient"))
+(after! polymode   (load! "lisp/minor/polymode"))
+
+
+(setq fancy-splash-image "/home/lucas/.doom.d/splash/blackhole-lines.svg")
+(defun doom-dashboard-draw-ascii-emacs-banner-fn ()
+  (let* ((banner
+          '(",---.,-.-.,---.,---.,---."
+            "|---'| | |,---||    `---."
+            "`---'` ' '`---^`---'`---'"))
+         (longest-line (apply #'max (mapcar #'length banner))))
+    (put-text-property
+     (point)
+     (dolist (line banner (point))
+       (insert (+doom-dashboard--center
+                +doom-dashboard--width
+                (concat
+                 line (make-string (max 0 (- longest-line (length line)))
+                                   32)))
+               "\n"))
+     'face 'doom-dashboard-banner)))
+
+(unless (display-graphic-p) ; for some reason this messes up the graphical splash screen atm
+  (setq +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-emacs-banner-fn))
+
 
 (remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
 
@@ -39,7 +70,8 @@
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 
 (map! "C-S-s" 'isearch-forward)
-(map! "C-s" 'save-buffer)
+(map! :egni "C-s" 'save-buffer)
+(map! :eni "C-/" 'evilnc-comment-or-uncomment-lines)
 
 (map! :m "ç" 'god-execute-with-current-bindings)
 (map! :i "C-ç" 'god-execute-with-current-bindings)
@@ -55,6 +87,8 @@
 (map! :leader :desc "Toggle centaur tabs" "t t" 'centaur-tabs-local-mode)
 (map! :gnvi "C-<tab>" 'centaur-tabs-forward
       :g "C-<iso-lefttab>" 'centaur-tabs-backward)
+
+(map! :leader :desc "Centered mode" "t c" 'centered-window-mode)
 
 (map! :map 'lean-mode-map "M-." 'lean-find-definition)
 
@@ -120,10 +154,3 @@
 (after! centaur-tabs
   (centaur-tabs-group-by-projectile-project))
 
-(setq +treemacs-git-mode 'deferred
-      treemacs-width 26
-      doom-themes-treemacs-theme "doom-colors"
-      doom-themes-treemacs-bitmap-indicator-width 1
-      doom-themes-treemacs-enable-variable-pitch nil)
-
-;; (aggressive-indent-global-mode +1)

@@ -37,7 +37,7 @@
 (unpin! julia-mode)
 
 ;; latex
-(package! latex-preview-pane)
+;; (package! latex-preview-pane)
 (package! aas :recipe (:host github :repo "ymarco/auto-activating-snippets"))
 (package! laas :recipe (:host github :repo "tecosaur/LaTeX-auto-activating-snippets"))
 
@@ -53,14 +53,33 @@
 (package! lsp-treemacs)
 (package! benchmark-init)
 
-
-;; Selectrum
 (package! embark)
 
 ;; Tree-sitter
 (package! tree-sitter)
 (package! tree-sitter-langs)
 
-
 (unpin! company-box)
-(unpin! centaur-tabs)
+
+(package! olivetti)
+
+;; Org-mode
+(package! poly-org)
+(package! md-roam :recipe (:host github :repo "nobiot/md-roam"))
+(package! org-noter)
+(package! org-roam-server)
+(package! org-marginalia :recipe (:host github :repo "nobiot/org-marginalia"))
+(package! org-transclusion :recipe (:host github :repo "nobiot/org-transclusion"))
+(package! nroam :recipe (:host github :repo "NicolasPetton/nroam"))
+(package! impatient-mode)
+;; (package! org-latex-impatient)
+
+;; Latex
+(package! ov)
+(package! xenops)
+
+;; (package! eaf :recipe (:host github :repo "manateelazycat/emacs-application-framework"))
+;; (package! epc)
+(package! less-theme :recipe (:host github :repo "nobiot/less-theme"))
+
+(unpin! lsp-mode)

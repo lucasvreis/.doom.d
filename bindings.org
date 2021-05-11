@@ -4,10 +4,11 @@
 
 Afeta todos os modos.
 
-** Salvando e procurando com i-search
+** Edição em geral
 #+begin_src emacs-lisp
 (map! "C-S-s" 'isearch-forward)
-(map! "C-s" 'save-buffer)
+(map! :egni "C-s" 'save-buffer)
+(map! :eni "C-/" 'evilnc-comment-or-uncomment-lines)
 #+end_src
 
 ** =god-mode=
@@ -37,6 +38,12 @@ Comandos do =god-mode=. Ele deixa alguns atalhos bem mais confortáveis, como =�
 (map! :gnvi "C-<tab>" 'centaur-tabs-forward
       :g "C-<iso-lefttab>" 'centaur-tabs-backward)
 #+end_src
+
+** Centered Mode
+#+begin_src emacs-lisp
+(map! :leader :desc "Centered mode" "t c" 'centered-window-mode)
+#+end_src
+
 
 * Lean
 #+begin_src emacs-lisp

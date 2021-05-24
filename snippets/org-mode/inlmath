@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: inlmath
+# binding: (
+# condition: (eq (char-before) ?\\)
+# --
+\($1\\\) $0

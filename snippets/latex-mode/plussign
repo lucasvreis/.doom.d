@@ -3,4 +3,4 @@
 # binding: +
 # condition: (texmathp)
 # --
- + 
+`(if (memq (char-before) '(?{ ?  ?$ ?^ ?_)) "+" " + ")`$0

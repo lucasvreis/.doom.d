@@ -3,11 +3,11 @@
 
       doom-theme 'doom-challenger-deep
 
-      doom-font (font-spec :family "JetBrains Mono" :size 17 :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "Noto Sans")
-      doom-unicode-font (font-spec :family "DejaVu Sans Mono" :weight 'normal))
+      doom-font (font-spec :family "VictorMono Nerd Font Mono" :size 20 :weight 'normal)
+      doom-variable-pitch-font (font-spec :family "Crimson" :size 26)
+      doom-unicode-font (font-spec :family "JuliaMono" :weight 'normal))
 
-(setq all-the-icons-scale-factor 1)
+(setq all-the-icons-scale-factor 0.88)
 
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
@@ -15,30 +15,77 @@
 
 ;; Hand-picked Unicode characters
 (add-hook! 'after-setting-font-hook
-  (set-fontset-font t 'unicode (font-spec :family "JetBrains Mono"))
+  (set-fontset-font t 'unicode (font-spec :family "JuliaMono"))
   (set-fontset-font t 'unicode (font-spec :family "DejaVu sans mono") nil 'append)
   (set-fontset-font t 'unicode (font-spec :family "DejaVu sans") nil 'append)
   (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
 
-(setq olivetti-body-width 100)
-(add-hook! '(latex-mode-hook org-mode-hook text-mode-hook) #'olivetti-mode)
+(add-load-path! "lisp/lib")
+(load! "lisp/use-packages")
 
-(load! "lisp/major/text-modes")
+(after! org        (load! "lisp/major/org"))
 (after! julia-mode (load! "lisp/major/julia"))
 (after! latex      (load! "lisp/major/latex"))
-(after! org        (load! "lisp/major/org"))
 (after! treemacs   (load! "lisp/major/treemacs"))
-(after! yasnippet  (load! "lisp/minor/yasnippet"))
+(after! pdf-tools  (load! "lisp/major/pdf-tools"))
+
+(after! centaur    (load! "lisp/minor/centaur"))
+(after! ivy        (load! "lisp/minor/completion"))
+(after! evil       (load! "lisp/minor/evil"))
 (after! impatient  (load! "lisp/minor/impatient"))
 (after! polymode   (load! "lisp/minor/polymode"))
+(after! yasnippet  (load! "lisp/minor/yasnippet"))
+(after! smudge     (load! "lisp/minor/smudge"))
+(load! "lisp/minor/solaire")
+
+(after! parinfer-rust-mode
+  (setq parinfer-rust-preferred-mode "indent"))
+
+(remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
 
-(setq fancy-splash-image "/home/lucas/.doom.d/splash/blackhole-lines.svg")
+(when (display-graphic-p)
+  (setq good-scroll-duration 0.08)
+  (good-scroll-mode 1))
+
+(setq window-divider-default-bottom-width 2  ; default is 1
+      window-divider-default-right-width 2)  ; default is 1
+
+(setq vterm-shell "fish")
+(setq ispell-dictionary "brasileiro")
+(setq delete-by-moving-to-trash t)
+(setq lsp-idle-delay 0.01)
+(setq company-idle-delay 0.01)
+
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
+      mouse-wheel-progressive-speed nil ;; don't accelerate scrolling
+      scroll-step 1 ;; keyboard scroll one line at a time
+      scroll-margin 3)
+
+(setq-hook! 'prog-mode-hook
+  header-line-format " ")
+
+(pcre-mode +1)
+
+(defun yas-before-company (fun &rest r)
+  (unless (yas-expand)
+    (if (and yas--active-field-overlay
+             (overlay-buffer yas--active-field-overlay))
+        (yas-next-field)
+      (apply fun r))))
+
+(advice-add 'company-complete-common-or-cycle :around #'yas-before-company)
+
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
 (defun doom-dashboard-draw-ascii-emacs-banner-fn ()
   (let* ((banner
-          '(",---.,-.-.,---.,---.,---."
-            "|---'| | |,---||    `---."
-            "`---'` ' '`---^`---'`---'"))
+          '("   o__  __o   \\o__ __o__ __o      o__ __o/      __o__      __o__"
+            "  /v      |>   |     |     |>    /v     |      />  \\      />  \\ "
+            " />      //   / \\   / \\   / \\   />     / \\   o/           \\o    "
+            " \\o    o/     \\o/   \\o/   \\o/   \\      \\o/  <|             v\\   "
+            "  v\\  /v __o   |     |     |     o      |    \\\\             <\\  "
+            "   <\\/> __/>  / \\   / \\   / \\    <\\__  / \\    _\\o__</  _\\o__</  "))
          (longest-line (apply #'max (mapcar #'length banner))))
     (put-text-property
      (point)
@@ -51,106 +98,4 @@
                "\n"))
      'face 'doom-dashboard-banner)))
 
-(unless (display-graphic-p) ; for some reason this messes up the graphical splash screen atm
-  (setq +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-emacs-banner-fn))
-
-
-(remove-hook! '(org-mode-hook text-mode-hook outline-mode-hook) #'flyspell-mode)
-
-(pcre-mode +1)
-(setq vterm-shell "fish")
-(setq evil-cross-lines t)
-(setq ispell-dictionary "brasileiro")
-(setq delete-by-moving-to-trash t)
-(setq lsp-idle-delay 0.01)
-(setq company-idle-delay 0.01)
-
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-(setq scroll-step 1) ;; keyboard scroll one line at a time
-
-(map! "C-S-s" 'isearch-forward)
-(map! :egni "C-s" 'save-buffer)
-(map! :eni "C-/" 'evilnc-comment-or-uncomment-lines)
-
-(map! :m "ç" 'god-execute-with-current-bindings)
-(map! :i "C-ç" 'god-execute-with-current-bindings)
-
-(map! "M-S-<right>" 'windsize-right)
-(map! "M-S-<left>" 'windsize-left)
-(map! "M-S-<down>" 'windsize-down)
-(map! "M-S-<up>" 'windsize-up)
-
-(map! "M-j" 'drag-stuff-down)
-(map! "M-k" 'drag-stuff-up)
-
-(map! :leader :desc "Toggle centaur tabs" "t t" 'centaur-tabs-local-mode)
-(map! :gnvi "C-<tab>" 'centaur-tabs-forward
-      :g "C-<iso-lefttab>" 'centaur-tabs-backward)
-
-(map! :leader :desc "Centered mode" "t c" 'centered-window-mode)
-
-(map! :map 'lean-mode-map "M-." 'lean-find-definition)
-
-(map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
-
-(when (display-graphic-p)
-  (setq good-scroll-duration 0.08)
-  (good-scroll-mode 1))
-
-(use-package! tree-sitter
-  :config
-  (require 'tree-sitter-langs)
-  (global-tree-sitter-mode)
-  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
-
-;; (use-package! selectrum
-;;   :hook (doom-first-input . selectrum-mode))
-
-;; (use-package! selectrum-prescient
-;;   :after selectrum
-;;   :config (selectrum-prescient-mode))
-
-;; (use-package! marginalia
-;;   :after selectrum
-;;   :config
-;;   (marginalia-mode)
-;;   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
-
-(use-package! embark
-  :after ivy
-  :bind (:map minibuffer-local-map
-         ("C-o" . embark-act)
-         :map embark-file-map
-         ("j" . dired-jump)))
-
-;; (setq projectile-completion-system 'default)
-
-(setq +zen-text-scale 1)
-
-(setq window-divider-default-bottom-width 2  ; default is 1
-      window-divider-default-right-width 2)  ; default is 1
-
-;; (nyan-mode t)
-
-;; (defun company-yasnippet-or-completion ()
-;;   (interactive)
-;;   (let ((yas-fallback-behavior nil))
-;;     (unless (yas-expand)
-;;       (call-interactively #'company-complete-common))))
-
-;; (after! company
-;;   (add-hook 'company-mode-hook (lambda ())
-;;             (substitute-key-definition 'company-complete-common
-;;                                        'company-yasnippet-or-completion
-;;                                        company-active-map)))
-
-(setq centaur-tabs-style "bar"
-      centaur-tabs-set-bar nil
-      centaur-tabs-height 36
-      centaur-tabs-plain-icons t
-      centaur-tabs-label-fixed-length 10)
-
-(after! centaur-tabs
-  (centaur-tabs-group-by-projectile-project))
-
+(setq +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-emacs-banner-fn)

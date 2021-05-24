@@ -23,7 +23,7 @@
        (company +childframe +tng)           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;; ido               ; the other *other* search engine...
-       (ivy +fuzzy +prescient +icons)               ; a search engine for love and life
+       (ivy +prescient +icons)               ; a search engine for love and life
 
        :ui
        deft            ; notational velocity for Emacs
@@ -40,14 +40,14 @@
        modeline          ; snazzy, Atom-inspired modeline, plus AP
        nav-flash         ; blink cursor line after big motions
        ;; neotree           ; a project drawer, like NERDTree for vim
-       ;; ophints           ; highlight the region an operation acts on
+       ophints           ; highlight the region an operation acts on
        (popup +all)   ; tame sudden yet inevitable temporary windows
        ;; tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        ;; unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
-       window-select     ; visually switch windows
+       (window-select +numbers)     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
        zen               ; distraction-free coding or writing
 
@@ -56,7 +56,7 @@
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
        format  ; automated prettiness
-       god               ; run Emacs commands without modifier keys
+       ;; god               ; run Emacs commands without modifier keys FIXME
        ;;lispy             ; vim for lisp, for people who don't like vim
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
@@ -169,21 +169,24 @@
        web               ; the tubes
        ;;yaml              ; JSON, but readable
 
-       :email
-       ;;(mu4e +gmail)
-       ;;notmuch
-       ;;(wanderlust +gmail)
-
-       :app
-       ;; calendar
-       ;;irc               ; how neckbeards socialize
-       ;; (rss +org)        ; emacs as an RSS reader
-       ;;twitter           ; twitter client https://twitter.com/vnought
-
        :config
        ;; literate
-       (default +bindings +smartparens))
+       (default +bindings +smartparens)
+
+       ;; === My modules ===
+
+       :my-completion
+       ;; selectrum
+
+       :my-ui
+       olivetti
+
+       :my-editor
+       notes
+       xenops)
+
 
 (when doom-debug-p
   (require 'benchmark-init)
   (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
+

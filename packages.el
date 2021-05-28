@@ -19,24 +19,20 @@
 (package! hl-line :disable t)
 (package! windsize)
 (package! good-scroll)
-;; (package! frame-workflow :recipe (:host github :repo "akirak/frame-workflow"))
-;; (package! undo-tree :recipe (:host gitlab :repo "tsc25/undo-tree"))
 (package! smooth-scrolling)
-(package! mixed-pitch)
+(package! scroll-on-drag)
 (package! nyan-mode)
-(package! lsp-treemacs)
-(package! org-journal)
 
-
-(package! embark)
+(package! mini-frame)
 
 ;; Tree-sitter
 (package! tree-sitter)
 (package! tree-sitter-langs)
+(package! less-theme :recipe (:host github :repo "nobiot/less-theme"))
 
+(unpin! lsp-mode)
+(package! lsp-treemacs)
 
 (unpin! company-box)
-(unpin! lsp-mode)
 
-(package! less-theme :recipe (:host github :repo "nobiot/less-theme"))
-(package! smudge)
+;; (package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))

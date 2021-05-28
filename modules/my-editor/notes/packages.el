@@ -10,3 +10,9 @@
 (package! impatient-mode)
 (package! poly-markdown)
 ;; (package! org-latex-impatient)
+
+(package! org-journal)
+(package! org-pdftools)
+(package! org-noter-pdftools)
+(package! calibredb)
+(package! nov)

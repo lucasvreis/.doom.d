@@ -4,6 +4,7 @@
   (not (bound-and-true-p polymode-mode)))
 
 (use-package! xenops
+  :commands xenops-mode
   :if (xenops-mode--should-enable-p)
   :config
   (setq xenops-math-image-scale-factor 1.2)

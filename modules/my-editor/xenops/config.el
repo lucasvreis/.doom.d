@@ -3,13 +3,30 @@
 (defun xenops-mode--should-enable-p ()
   (not (bound-and-true-p polymode-mode)))
 
-(use-package! xenops
+(use-package xenops
   :commands xenops-mode
-  :if (xenops-mode--should-enable-p)
   :config
-  (setq xenops-math-image-scale-factor 1.2)
+  (require 'aio)
+  (require 'avy)
+  (require 'dash)
+  (require 'f)
+  (require 's)
+
+  ;; (add-to-list 'xenops-elements
+  ;;              '(block-math
+  ;;                ((:delimiters . (("^[ \t]*\\\\begin{\\(align\\|equation\\|tikzpicture\\|gather\\|tikzcd\\)\\*?}"
+  ;;                                  "^[ \t]*\\\\end{\\(align\\|equation\\|tikzpicture\\|gather\\|tikzcd\\)\\*?}")
+  ;;                                 ("^[ \t]*\\\\\\["
+  ;;                                  "^[ \t]*\\\\\\]")))
+  ;;                 (:parser . xenops-math-parse-block-element-at-point)
+  ;;                 (:handlers . (xenops-math-render
+  ;;                               xenops-math-regenerate
+  ;;                               xenops-math-reveal
+  ;;                               xenops-math-image-increase-size
+  ;;                               xenops-math-image-decrease-size
+  ;;                               xenops-element-copy
+  ;;                               xenops-element-delete)))))
+
+  (setq xenops-math-image-scale-factor 1.4))
         ;; xenops-font-family "NewComputerModern Sans"
         ;; xenops-reveal-on-entry nil
-  (add-hook! xenops-mode
-    (xenops-xen-mode +1)
-    (solaire-mode -1)))

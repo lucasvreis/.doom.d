@@ -1,14 +1,15 @@
-;;; lisp/lean.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t; -*-
 
 (setq +treemacs-git-mode 'deferred
       treemacs-follow-after-init t
       treemacs-width 26
-      treemacs-user-header-line-format "treemacs projects"
       doom-themes-treemacs-theme "doom-colors"
       doom-themes-treemacs-bitmap-indicator-width 1
-      doom-themes-treemacs-enable-variable-pitch nil)
+      doom-themes-treemacs-line-spacing 0
+      doom-themes-treemacs-enable-variable-pitch t)
 
-(add-hook! 'treemacs-mode-hook #'treemacs-follow-mode)
+(add-hook! 'treemacs-mode-hook
+           #'treemacs-follow-mode)
 
 (defvar treemacs-file-ignore-extensions '()
   "File extension which `treemacs-ignore-filter' will ensure are ignored")

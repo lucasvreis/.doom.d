@@ -21,8 +21,10 @@
           (left . 0.5))
         mini-frame-ignore-commands
         '(eval-expression
+          pp-eval-expression
           "edebug-eval-expression"
           debugger-eval-expression
+          kill-current-buffer
           save-buffers-kill-terminal
           evil-ex-search-forward
           evil-ex-search-backward

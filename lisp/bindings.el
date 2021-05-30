@@ -59,7 +59,7 @@
 (map! "M-j" 'drag-stuff-down
       "M-k" 'drag-stuff-up)
 
-(map! :leader :desc "Centered mode" "t c" 'olivetti-mode)
+(map! :leader :desc "Centered mode" "t e" 'olivetti-mode)
 
 (map! :map lean-mode-map "M-." 'lean-find-definition)
 

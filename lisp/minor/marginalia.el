@@ -6,7 +6,7 @@
   (advice-add #'completion-metadata-get :around #'icon-completion-metadata-get))
 
 (defface all-the-icons-dir-face
-  '((((background dark)) :foreground "white")
+  '((((background dark))  :foreground "white")
     (((background light)) :foreground "black"))
   "Face for the dir icons used in ivy"
   :group 'all-the-icons-faces)

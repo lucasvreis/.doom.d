@@ -1,8 +1,24 @@
-;;; -*- lexical-binding: t; -*-
+#+title: Minha Configuração do Emacs
 
+Vamos usar o binding léxico: =12=
+
+#+begin_src emacs-lisp
+;;; -*- lexical-binding: t; -*-
+#+end_src
+
+* O básico
+** Informações pessoais
+
+Meus dados, qual a utilidade disso?
+
+#+begin_src emacs-lisp
 (setq user-full-name "Lucas Viana Reis"
       user-mail-address "l240191@dac.unicamp.br")
+#+end_src
 
+** Tema
+*** Escolha
+#+begin_src emacs-lisp
 (setq doom-theme 'doom-ayu-light)
 
 ;; Make theme selection less distracting
@@ -28,7 +44,10 @@
               (seq-difference
                (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
                custom-themes-exclude #'eq)))
+#+end_src
+*** Fontes
 
+#+begin_src emacs-lisp
 (setq doom-font                (font-spec :family "JetBrains Mono" :size 19)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 19)
       doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light)
@@ -38,7 +57,13 @@
 (add-hook! 'after-setting-font-hook
   (set-fontset-font t 'unicode (font-spec :family "JuliaMono"))
   (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
+#+end_src
 
+*** Faces e ícones
+
+Deixamos os comentários itálicas, e os ~keywords~ oblíquos.
+
+#+begin_src emacs-lisp
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant oblique)
@@ -47,8 +72,20 @@
 
   '(doom-modeline-buffer-modified :foreground "orange")
   '(doom-modeline-info :foreground "white"))
+#+end_src
 
+Ajusta o tamanho dos ícones.
+
+#+begin_src emacs-lisp
 (setq all-the-icons-scale-factor 0.88)
+#+end_src
+
+** Dashboard
+*** Estético
+
+Pequenas modificações ao dashboard:
+
+#+begin_src emacs-lisp
 
 ;; Desabilita o modeline
 (add-hook! '+doom-dashboard-mode-hook (hide-mode-line-mode 1))
@@ -56,6 +93,13 @@
 ;; Desabilita o "benchmark"
 (remove-hook 'window-setup-hook #'doom-display-benchmark-h)
 
+#+end_src
+
+*** Banner
+
+Pequenos acrobatas, que tal?
+
+#+begin_src emacs-lisp
 (defun doom-dashboard-draw-ascii-emacs-banner-fn ()
   (let* ((banner
           '("" ""
@@ -78,26 +122,64 @@
                "\n"))
      'face 'doom-dashboard-banner)))
 (setq +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-emacs-banner-fn)
+#+end_src
 
+A fonte padrão é itálica e deixa os acrobatas tortos, vamos resolver isso:
+
+#+begin_src emacs-lisp
 (custom-set-faces!
   '(doom-dashboard-banner
     :inherit font-lock-comment-face
     :slant normal))
+#+end_src
 
+* Minha biblioteca elisp
+** Pasta-bibioteca
+
+Com algumas bibliotecas externas, por exemplo.
+
+#+begin_src emacs-lisp
 (add-load-path! "lisp/lib")
+#+end_src
 
+** Excluir todos os conselhos
+#+begin_src emacs-lisp
 (defun advice-unadvice (sym)
   "Remove all advices from symbol SYM."
   (interactive "aFunction symbol: ")
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+#+end_src
+** "Conselhos" úteis
 
+Para desabilitar as mensagens chatas:
+
+#+begin_src emacs-lisp
 (defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
+#+end_src
 
+* Emacs em geral
+** Edição
+*** Variáveis comuns
+#+begin_src emacs-lisp
 (setq-default fill-column 100)
+#+end_src
+*** Salvando
 
+Desabilita uma mensagem que rapidamente aparece na tela e some.
+
+Era para resolver algo que aparece com o ~literate~, mas não resolve e não sei
+como resolver.
+
+#+begin_src emacs-lisp
 ;; FIXME
 (advice-add 'save-buffer :around #'advice--inhibit-message)
+#+end_src
 
+** ME ORGANIZE!
+
+Coisas que precisam ir para algum lugar...
+
+#+begin_src emacs-lisp
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
 (when (display-graphic-p)
@@ -120,8 +202,17 @@
 
 (pcre-mode +1)
 
-;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
+#+end_src
+** Maximizar a janela?
+
+Maximizar a janela ao iniciar?
+
+#+begin_src emacs-lisp
+;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+#+end_src
+* Configurações de pacotes
+#+begin_src emacs-lisp
 (load! "lisp/bindings")
 (load! "lisp/use-packages")
 
@@ -131,3 +222,6 @@
     (dolist (file (file-expand-wildcards (concat folder "*.el")))
       (let ((f (file-name-sans-extension (file-name-nondirectory file))))
         (eval `(after! ,(intern f) (load! ,f ,folder)))))))
+
+
+#+end_src

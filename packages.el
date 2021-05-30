@@ -28,7 +28,6 @@
 ;; Tree-sitter
 (package! tree-sitter)
 (package! tree-sitter-langs)
-(package! less-theme :recipe (:host github :repo "nobiot/less-theme"))
 
 (unpin! lsp-mode)
 (package! lsp-treemacs)

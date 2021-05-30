@@ -11,12 +11,25 @@
 (use-package! calibredb
   :commands calibredb)
 
+(use-package! org-noter
+  :commands org-noter
+  :config
+  (setq org-noter-always-create-frame nil))
+
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
 
 (use-package org-noter-pdftools
   :after org-noter
   :config
+
+  (defun org-noter-insert-image-slice-note ()
+    (interactive)
+    (async-start (shell-command "flameshot gui")
+          (progn
+            (org-noter-insert-note)
+            (org-download-clipboard))))
+
   ;; Add a function to ensure precise note is inserted
   (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
     (interactive "P")
@@ -45,4 +58,6 @@ With a prefix ARG, remove start location."
             (org-entry-put nil org-noter-property-note-location
                            (org-noter--pretty-print-location location))))))))
   (with-eval-after-load 'pdf-annot
-    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note))
+
+  (map! :map org-noter-doc-mode-map "M-l" #'org-noter-insert-image-slice-note))

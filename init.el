@@ -20,7 +20,7 @@
        ;;layout            ; auie,ctsrnm is the superior home row
 
        :completion
-       (company +tng)           ; the ultimate code completion backend
+       (company +childframe)           ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;; ido               ; the other *other* search engine...
        ;;(ivy +prescient +icons +childframe)               ; a search engine for love and life
@@ -32,7 +32,7 @@
        doom-dashboard ; a nifty splash screen for Emacs
        ;; doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;; (emoji +unicode)  ; 🙂
-       ;; fill-column       ; a `fill-column' indicator
+       fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
        ;;indent-guides     ; highlighted indent columns
@@ -85,7 +85,7 @@
        ;; grammar           ; tasing grammar mistake every you make
 
        :tools
-       bibtex
+       ;; bibtex
        ;;ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
@@ -94,7 +94,7 @@
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
-       (lookup +dictionary +offline)              ; navigate your code and its documentation
+       lookup              ; navigate your code and its documentation
        (lsp +peek)
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
@@ -171,7 +171,7 @@
        ;;yaml              ; JSON, but readable
 
        :config
-       ;; literate
+       literate
        (default +bindings +smartparens)
 
        ;; === My modules ===

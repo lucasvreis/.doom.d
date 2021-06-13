@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: theorem
+# uuid: theorem
+# key: theorem
+# --
+#+begin_theorem
+$1
+#+end_theorem
+$0

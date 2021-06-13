@@ -1,11 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq user-full-name "Lucas Viana Reis"
-      user-mail-address "l240191@dac.unicamp.br")
+(setq doom-theme 'doom-monokai-octagon)
 
-(setq doom-theme 'doom-ayu-light)
-
-;; Make theme selection less distracting
+;; Deixa a seleção menos distrativa
 (defvar custom-themes-exclude
   '(doom-acario-light
     doom-acario-dark
@@ -20,8 +17,17 @@
     doom-peacock
     doom-wilmersdorf
     doom-manegarm
-    doom-ephemeral))
-
+    doom-ephemeral
+    doom-nova
+    doom-opera
+    doom-zenburn
+    doom-ayu-mirage
+    doom-vibrant
+    doom-ir-black
+    doom-old-hope
+    doom-miramare
+    doom-monokai-spectrum
+    doom-monokai-ristretto))
 
 (advice-add 'custom-available-themes :filter-return
             (lambda (l)
@@ -49,6 +55,9 @@
   '(doom-modeline-info :foreground "white"))
 
 (setq all-the-icons-scale-factor 0.88)
+
+(setq window-divider-default-bottom-width 2   ; default is 1
+      window-divider-default-right-width  2)  ; default is 1
 
 ;; Desabilita o modeline
 (add-hook! '+doom-dashboard-mode-hook (hide-mode-line-mode 1))
@@ -84,6 +93,8 @@
     :inherit font-lock-comment-face
     :slant normal))
 
+(let ((default-directory "~/.doom.d/lisp/lib"))
+  (normal-top-level-add-subdirs-to-load-path))
 (add-load-path! "lisp/lib")
 
 (defun advice-unadvice (sym)
@@ -93,39 +104,110 @@
 
 (defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
 
-(setq-default fill-column 100)
-
-;; FIXME
-(advice-add 'save-buffer :around #'advice--inhibit-message)
-
-(remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
-
 (when (display-graphic-p)
   (setq good-scroll-duration 0.08)
   (good-scroll-mode 1))
 
-(setq window-divider-default-bottom-width 2  ; default is 1
-      window-divider-default-right-width 2  ; default is 1
-
-      vterm-shell "fish"
-      ispell-dictionary "brasileiro"
-      delete-by-moving-to-trash t
-      mouse-autoselect-window nil
-      lsp-idle-delay 0.1
-      company-idle-delay 0.1
-
-      mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
       mouse-wheel-progressive-speed nil ;; don't accelerate scrolling
       scroll-step 1) ;; keyboard scroll one line at a time
 
+(setq-default fill-column 80)
+
+;; FIXME
+(advice-add 'save-buffer :around #'advice--inhibit-message)
+
+(blink-cursor-mode +1)
+
 (pcre-mode +1)
+
+(remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
+
+(setq vterm-shell "fish"
+      ispell-dictionary "brasileiro"
+      delete-by-moving-to-trash t
+      mouse-autoselect-window nil)
 
 ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
-(load! "lisp/bindings")
+(map! "C-S-s" 'isearch-forward)
+(map! :egni "C-s" 'save-buffer)
+(map! :egni "C-/" 'evilnc-comment-or-uncomment-lines)
+
+(map! :i "C-v" 'yank)
+(map! :i "C-z" 'evil-undo)
+(map! :i "C-S-z" 'evil-redo)
+(map! :i "C-x" 'evil-delete)
+
+;; no dia em que eu precisar usar teclado americano, eu vou me arrepender...
+(map! :map evil-motion-state-map
+      "j" 'evil-backward-char
+      "k" 'evil-next-line
+      "l" 'evil-previous-line
+      "ç" 'evil-forward-char)
+
+(map! :map evil-window-map
+      ;; Navigation
+      "j"       #'evil-window-left
+      "k"       #'evil-window-down
+      "l"       #'evil-window-up
+      "ç"       #'evil-window-right
+      "C-j"     #'evil-window-left
+      "C-k"     #'evil-window-down
+      "C-l"     #'evil-window-up
+      "C-ç"     #'evil-window-right
+      ;; Swapping windows
+      "J"       #'+evil/window-move-left
+      "K"       #'+evil/window-move-down
+      "L"       #'+evil/window-move-up
+      "Ç"       #'+evil/window-move-right)
+
+(map! :i "M-J" 'evil-backward-char
+      :i "M-K" 'evil-next-line
+      :i "M-L" 'evil-previous-line
+      :i "M-Ç" 'evil-forward-char)
+
+(after! treemacs (evil-define-key 'treemacs treemacs-mode-map "l" nil "h" nil))
+
+;; (evil-define-key '(visual normal) Info-mode-map "l" nil)
+(map! :map Info-mode-map :vn "l" nil)
+
+(map! :after treemacs
+      :map evil-treemacs-state-map
+      "j"      #'treemacs-COLLAPSE-action
+      "k"      #'treemacs-next-line
+      "l"      #'treemacs-previous-line
+      "ç"      #'treemacs-RET-action)
+
+(defhydra window-height-hydra (evil-window-map)
+  "window height"
+  ("=" evil-window-increase-height "increase")
+  ("-" evil-window-decrease-height "decrease"))
+
+(map! :prefix-map ("\x80" . "kitty C map")
+      :map 'key-translation-map
+      "/" "C-/")
+
+(map! :prefix-map ("\x81" . "kitty C-S map")
+      :map 'key-translation-map
+      "z" (kbd "C-S-z"))
+
+(map! "M-S-<right>" 'windsize-right
+      "M-S-<left>" 'windsize-left
+      "M-S-<down>" 'windsize-down
+      "M-S-<up>" 'windsize-up)
+
+(map! "M-j" 'drag-stuff-down
+      "M-k" 'drag-stuff-up)
+
+(map! :leader :desc "Centered mode" "t e" 'olivetti-mode)
+
+(map! :map lean-mode-map "M-." 'lean-find-definition)
+
+(map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
+
 (load! "lisp/use-packages")
 
-;; "Let's make this work, at any cost"
 (dolist (type '(major minor))
   (let ((folder (format "~/.doom.d/lisp/%s/" type)))
     (dolist (file (file-expand-wildcards (concat folder "*.el")))

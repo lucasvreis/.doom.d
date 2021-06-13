@@ -3,6 +3,9 @@
 
 (package! scroll-restore)
 
+;; Org
+(package! org-appear)
+
 ;; julia mode
 (package! julia-vterm)
 (package! julia-repl :disable t)
@@ -23,7 +26,7 @@
 (package! scroll-on-drag)
 (package! nyan-mode)
 
-(package! mini-frame)
+(package! mini-frame :disable t)
 
 ;; Tree-sitter
 (package! tree-sitter)
@@ -34,4 +37,7 @@
 
 (unpin! company-box)
 
-;; (package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))
+(package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))
+(package! consult :recipe (:host github :repo "minad/consult" :branch "preview-debounce2"))
+(unpin! consult)
+(unpin! doom-themes)

@@ -31,4 +31,4 @@
       :n "C-l" #'pdf-view-previous-page-command)
 
 (after! doom-themes
-  (setq pdf-view-midnight-colors (cons (cadr (assq 'fg-alt doom-themes--colors)) (cadr (assq 'bg-alt doom-themes--colors)))))
+  (setq pdf-view-midnight-colors (cons (cadr (assq 'fg doom-themes--colors)) (cadr (assq 'bg doom-themes--colors)))))

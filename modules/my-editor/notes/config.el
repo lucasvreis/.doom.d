@@ -6,7 +6,7 @@
   (add-hook 'org-mode-hook #'nroam-setup-maybe))
 
 (use-package! org-marginalia
-  :hook (org-mode . org-marginalia-mode))
+  :commands org-marginalia-mode)
 
 (use-package! calibredb
   :commands calibredb)
@@ -14,7 +14,7 @@
 (use-package! org-noter
   :commands org-noter
   :config
-  (setq org-noter-always-create-frame nil))
+  (setq org-noter-always-create-frame t))
 
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))

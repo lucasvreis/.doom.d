@@ -1,15 +1,21 @@
 ;;; -*- lexical-binding: t; -*-
 
 (setq +treemacs-git-mode 'deferred
-      treemacs-follow-after-init t
       treemacs-width 26
+      treemacs-follow-after-init t
       doom-themes-treemacs-theme "doom-colors"
       doom-themes-treemacs-bitmap-indicator-width 1
       doom-themes-treemacs-line-spacing 0
       doom-themes-treemacs-enable-variable-pitch t)
 
-(add-hook! 'treemacs-mode-hook
-           #'treemacs-follow-mode)
+(after! lsp-treemacs
+  (load-library "doom-themes-ext-treemacs"))
+
+(advice-add 'treemacs-create-dir :after #'treemacs-refresh) ;; refresh after creating new dir
+
+;; This seems to give me problems:
+;; (add-hook! 'treemacs-mode-hook
+;;            #'treemacs-follow-mode)
 
 (defvar treemacs-file-ignore-extensions '()
   "File extension which `treemacs-ignore-filter' will ensure are ignored")

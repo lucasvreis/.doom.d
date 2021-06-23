@@ -61,3 +61,11 @@ With a prefix ARG, remove start location."
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note))
 
   (map! :map org-noter-doc-mode-map "M-l" #'org-noter-insert-image-slice-note))
+
+(use-package org-latex-impatient
+  :defer t
+  :hook (org-mode . org-latex-impatient-mode)
+  :init
+  (setq org-latex-impatient-tex2svg-bin
+        ;; location of tex2svg executable
+        "/usr/bin/tex2svg"))

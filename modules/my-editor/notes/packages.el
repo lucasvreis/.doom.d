@@ -9,10 +9,12 @@
 (package! nroam :recipe (:host github :repo "NicolasPetton/nroam"))
 (package! impatient-mode)
 (package! poly-markdown)
-;; (package! org-latex-impatient)
+(package! org-latex-impatient)
 
 (package! org-journal)
 (package! org-pdftools)
 (package! org-noter-pdftools)
+(package! org-sidebar)
+
 (package! calibredb)
 (package! nov)

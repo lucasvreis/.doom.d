@@ -1,7 +1,7 @@
 ;;; lisp/use-packages.el -*- lexical-binding: t; -*-
 
 (use-package prettify-utils
-  :after latex)
+  :after (org latex))
 
 (use-package tree-sitter
   :after doom-first-file-hook
@@ -35,5 +35,3 @@
 
 (use-package scroll-on-drag
   :bind ([down-mouse-2] . #'scroll-on-drag))
-
-(use-package lean4-mode)

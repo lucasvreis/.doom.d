@@ -20,18 +20,5 @@
   (LaTeX-math-mode +1)
   (hl-todo-mode +1)
   (auto-fill-mode +1)
+  (define-prettify-symbols)
   (prettify-symbols-mode +1))
-
-(after! prettify-utils
-  (load! "script/prettify-latex-autogen" doom-private-dir)
-  (setq tex--prettify-symbols-alist
-        (append
-          '(("\\left" . ?ₗ)
-            ("\\right" . ?ᵣ)
-            ("_n" . ?ₙ))
-          (prettify-utils-generate
-           ("^{-1}" "⁻¹")
-           ("_{i=1}" "ᵢ₌₁")
-           ("\\not\\subset" "⊄"))
-          prettify-mode--latex-autogen-alist
-          (bound-and-true-p tex--prettify-symbols-alist))))

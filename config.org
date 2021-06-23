@@ -1,5 +1,37 @@
 #+title: Minha Configuração do Emacs
 
+* Conteúdo :toc:
+- [[#preliminares][Preliminares]]
+- [[#estético][Estético]]
+  - [[#tema][Tema]]
+  - [[#fontes][Fontes]]
+  - [[#faces-e-ícones][Faces e ícones]]
+  - [[#divisores-de-janelas][Divisores de janelas]]
+  - [[#dashboard][Dashboard]]
+- [[#minha-biblioteca][Minha biblioteca]]
+  - [[#pasta-bibioteca][Pasta-bibioteca]]
+  - [[#pequenas-funções][Pequenas funções]]
+  - [[#excluir-todos-os-conselhos][Excluir todos os conselhos]]
+  - [[#conselhos-úteis]["Conselhos" úteis]]
+  - [[#escrita-em-latex][Escrita em LaTeX]]
+- [[#emacs-em-geral][Emacs em geral]]
+  - [[#scroll][Scroll]]
+  - [[#edição-de-texto][Edição de texto]]
+  - [[#pesquisa--regex][Pesquisa & regex]]
+  - [[#menu-de-contexto][Menu de contexto]]
+  - [[#outros][Outros]]
+  - [[#maximizar-a-janela][Maximizar a janela?]]
+- [[#atalhos-de-teclado][Atalhos de teclado]]
+  - [[#deixando-o-emacs-mais-familiar][Deixando o Emacs mais familiar]]
+  - [[#evil-abnt][Evil ABNT]]
+  - [[#hydras][Hydras]]
+  - [[#kitty-terminal][Kitty (Terminal)]]
+  - [[#edit-leader-key][Edit leader key]]
+  - [[#outros-1][Outros]]
+- [[#configurações-de-pacotes][Configurações de pacotes]]
+  - [[#projectile][Projectile]]
+
+* Preliminares
 Vamos usar o binding léxico:
 
 #+begin_src emacs-lisp
@@ -9,7 +41,7 @@ Vamos usar o binding léxico:
 * Estético
 ** Tema
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-monokai-octagon)
+(setq doom-theme 'doom-flatwhite)
 
 ;; Deixa a seleção menos distrativa
 (defvar custom-themes-exclude
@@ -70,7 +102,11 @@ Deixamos os comentários itálicas, e os ~keywords~ oblíquos.
   '(yas-field-highlight-face :box (:color "dark green") :inherit nil)
 
   '(doom-modeline-buffer-modified :foreground "orange")
-  '(doom-modeline-info :foreground "white"))
+  '(doom-modeline-info :foreground "white")
+  `(org-latex-and-related :background ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
+
+(custom-theme-set-faces! 'doom-flatwhite
+  `(org-latex-and-related :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
 #+end_src
 
 Ajusta o tamanho dos ícones.
@@ -87,6 +123,7 @@ Ajusta o tamanho dos ícones.
 #+end_src
 
 ** Dashboard
+teste
 *** Estético
 
 Pequenas modificações ao dashboard:
@@ -137,10 +174,8 @@ A fonte padrão é itálica e deixa os acrobatas tortos, vamos resolver isso:
     :slant normal))
 #+end_src
 
-* Minha biblioteca elisp
+* Minha biblioteca
 ** Pasta-bibioteca
-
-
 
 Com algumas bibliotecas externas, por exemplo.
 
@@ -152,6 +187,10 @@ Com algumas bibliotecas externas, por exemplo.
 
 #+RESULTS:
 
+** Pequenas funções
+#+begin_src emacs-lisp
+(defun string-list-p (x) (and (listp x) (--all? (stringp it) x)))
+#+end_src
 ** Excluir todos os conselhos
 #+begin_src emacs-lisp
 (defun advice-unadvice (sym)
@@ -167,6 +206,53 @@ Para desabilitar as mensagens chatas:
 (defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
 #+end_src
 
+** Escrita em LaTeX
+*** Prettify mode
+#+begin_src emacs-lisp
+(defun custom-tex--prettify-symbols-compose-p (_start end _match)
+  (or
+   ;; If the matched symbol doesn't end in a word character, then we
+   ;; simply allow composition.  The symbol is probably something like
+   ;; \|, \(, etc.
+   (not (eq ?w (char-syntax (char-before end))))
+   ;; Else we look at what follows the match in order to decide.
+   (let* ((after-char (char-after end))
+          (after-syntax (char-syntax after-char)))
+     (not (or
+           ;; Don't compose \alpha@foo.
+           (eq after-char ?@)
+           ;; The \alpha in \alpha2 or \alpha-\beta may be composed but
+           ;; of course \alphax may not.
+           (and (eq after-syntax ?w)
+                (not (memq after-char
+                           '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9 ?+ ?- ?' ?\" ?$ ?_))))
+           ;; Don't compose inside verbatim blocks.
+           (eq 2 (nth 7 (syntax-ppss))))))))
+
+(defun define-prettify-symbols ()
+  (require 'prettify-utils)
+  (require 'tex-mode)
+  (load! "script/prettify-latex-autogen" doom-private-dir)
+  (setq tex--prettify-symbols-alist
+        (append
+          '(("\\left" . ?ₗ)
+            ("\\right" . ?ᵣ)
+            ("_n" . ?ₙ)
+            ("_k" . ?ₖ)
+            ("\\tilde" . ?˜)
+            ("\\dots" . ?…))
+          (prettify-utils-generate
+            ("^{-1}" "⁻¹")
+            ("_{i=1}" "ᵢ₌₁")
+            ("\\not\\subset" "⊄"))
+          prettify-mode--latex-autogen-alist
+          (bound-and-true-p tex--prettify-symbols-alist))))
+
+(defun setup-latex-prettify ()
+  (set (make-local-variable 'prettify-symbols-alist) tex--prettify-symbols-alist)
+  (add-function :override (local 'prettify-symbols-compose-predicate)
+                #'custom-tex--prettify-symbols-compose-p))
+#+end_src
 * Emacs em geral
 ** Scroll
 #+begin_src emacs-lisp
@@ -182,6 +268,10 @@ Para desabilitar as mensagens chatas:
 *** Variáveis
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
+
+(setq mouse-drag-and-drop-region t
+      mouse-drag-and-drop-region-cut-when-buffers-differ t
+      mouse-drag-and-drop-region-show-tooltip nil)
 #+end_src
 *** Salvando
 
@@ -199,16 +289,37 @@ como resolver.
 #+begin_src emacs-lisp
 (blink-cursor-mode +1)
 #+end_src
+
+*** Abbrev
+
+Meu deus, como eu passei tanto tempo (4 meses) sem saber da existência
+desta coisa MARAVILHOSA??? É INCRÍVEL!!!!
+
+#+begin_src emacs-lisp
+(add-hook! 'text-mode-hook
+           (abbrev-mode +1))
+#+end_src
+
 ** Pesquisa & regex
 #+begin_src emacs-lisp
 (pcre-mode +1)
 #+end_src
+** Menu de contexto
+
+Retirado de:
+[[https://somecallmespace.com/emacs-context-menu.html][some call me Space | Emacs Context Menu]]
+
+#+begin_src emacs-lisp
+(require 'context-menu)
+(map! [mouse-3] 'my-context-menu)
+#+end_src
+
 ** Outros
 
 #+begin_src emacs-lisp
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
-(setq vterm-shell "fish"
+(setq vterm-shell "zsh"
       ispell-dictionary "brasileiro"
       delete-by-moving-to-trash t
       mouse-autoselect-window nil)
@@ -305,6 +416,14 @@ Uma história antiga.
       :map 'key-translation-map
       "z" (kbd "C-S-z"))
 #+end_src
+
+** Edit leader key
+#+begin_src emacs-lisp
+(map! :leader
+      :prefix ("e" . "edit")
+      :desc "New snipet" "s" #'+snippets/new
+      :desc "New alias" "a" #'+snippets/new-alias)
+#+end_src
 ** Outros
 
 #+begin_src emacs-lisp
@@ -330,6 +449,11 @@ Primeiro, alguns pacotes configurados com o =use-package=:
 (load! "lisp/use-packages")
 #+end_src
 
+Agora, algumas variáveis do =defcustom=:
+#+begin_src emacs-lisp
+(load! "lisp/defcustoms.el")
+#+end_src
+
 O trecho a seguir carrega os arquivos de configurações nos diretórios
 =lisp/major= e =lisp/minor=, e faz com que cada arquivo seja carregado apenas
 depois do módulo de mesmo nome ser carregado (com a função =after!=).
@@ -339,4 +463,12 @@ depois do módulo de mesmo nome ser carregado (com a função =after!=).
     (dolist (file (file-expand-wildcards (concat folder "*.el")))
       (let ((f (file-name-sans-extension (file-name-nondirectory file))))
         (eval `(after! ,(intern f) (load! ,f ,folder)))))))
+#+end_src
+
+** Projectile
+#+begin_src emacs-lisp
+(after! projectile
+    (projectile-register-project-type 'julia '("Project.toml")
+                                    :project-file "Project.toml"
+                                    :test "julia -e \"using Pkg; Pkg.test()\""))
 #+end_src

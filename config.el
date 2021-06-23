@@ -1,6 +1,6 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq doom-theme 'doom-monokai-octagon)
+(setq doom-theme 'doom-flatwhite)
 
 ;; Deixa a seleção menos distrativa
 (defvar custom-themes-exclude
@@ -52,7 +52,11 @@
   '(yas-field-highlight-face :box (:color "dark green") :inherit nil)
 
   '(doom-modeline-buffer-modified :foreground "orange")
-  '(doom-modeline-info :foreground "white"))
+  '(doom-modeline-info :foreground "white")
+  `(org-latex-and-related :background ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
+
+(custom-theme-set-faces! 'doom-flatwhite
+  `(org-latex-and-related :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
 
 (setq all-the-icons-scale-factor 0.88)
 
@@ -97,12 +101,58 @@
   (normal-top-level-add-subdirs-to-load-path))
 (add-load-path! "lisp/lib")
 
+(defun string-list-p (x) (and (listp x) (--all? (stringp it) x)))
+
 (defun advice-unadvice (sym)
   "Remove all advices from symbol SYM."
   (interactive "aFunction symbol: ")
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
 (defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
+
+(defun custom-tex--prettify-symbols-compose-p (_start end _match)
+  (or
+   ;; If the matched symbol doesn't end in a word character, then we
+   ;; simply allow composition.  The symbol is probably something like
+   ;; \|, \(, etc.
+   (not (eq ?w (char-syntax (char-before end))))
+   ;; Else we look at what follows the match in order to decide.
+   (let* ((after-char (char-after end))
+          (after-syntax (char-syntax after-char)))
+     (not (or
+           ;; Don't compose \alpha@foo.
+           (eq after-char ?@)
+           ;; The \alpha in \alpha2 or \alpha-\beta may be composed but
+           ;; of course \alphax may not.
+           (and (eq after-syntax ?w)
+                (not (memq after-char
+                           '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9 ?+ ?- ?' ?\" ?$ ?_))))
+           ;; Don't compose inside verbatim blocks.
+           (eq 2 (nth 7 (syntax-ppss))))))))
+
+(defun define-prettify-symbols ()
+  (require 'prettify-utils)
+  (require 'tex-mode)
+  (load! "script/prettify-latex-autogen" doom-private-dir)
+  (setq tex--prettify-symbols-alist
+        (append
+          '(("\\left" . ?ₗ)
+            ("\\right" . ?ᵣ)
+            ("_n" . ?ₙ)
+            ("_k" . ?ₖ)
+            ("\\tilde" . ?˜)
+            ("\\dots" . ?…))
+          (prettify-utils-generate
+            ("^{-1}" "⁻¹")
+            ("_{i=1}" "ᵢ₌₁")
+            ("\\not\\subset" "⊄"))
+          prettify-mode--latex-autogen-alist
+          (bound-and-true-p tex--prettify-symbols-alist))))
+
+(defun setup-latex-prettify ()
+  (set (make-local-variable 'prettify-symbols-alist) tex--prettify-symbols-alist)
+  (add-function :override (local 'prettify-symbols-compose-predicate)
+                #'custom-tex--prettify-symbols-compose-p))
 
 (when (display-graphic-p)
   (setq good-scroll-duration 0.08)
@@ -114,16 +164,26 @@
 
 (setq-default fill-column 80)
 
+(setq mouse-drag-and-drop-region t
+      mouse-drag-and-drop-region-cut-when-buffers-differ t
+      mouse-drag-and-drop-region-show-tooltip nil)
+
 ;; FIXME
 (advice-add 'save-buffer :around #'advice--inhibit-message)
 
 (blink-cursor-mode +1)
 
+(add-hook! 'text-mode-hook
+           (abbrev-mode +1))
+
 (pcre-mode +1)
+
+(require 'context-menu)
+(map! [mouse-3] 'my-context-menu)
 
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
-(setq vterm-shell "fish"
+(setq vterm-shell "zsh"
       ispell-dictionary "brasileiro"
       delete-by-moving-to-trash t
       mouse-autoselect-window nil)
@@ -192,6 +252,11 @@
       :map 'key-translation-map
       "z" (kbd "C-S-z"))
 
+(map! :leader
+      :prefix ("e" . "edit")
+      :desc "New snipet" "s" #'+snippets/new
+      :desc "New alias" "a" #'+snippets/new-alias)
+
 (map! "M-S-<right>" 'windsize-right
       "M-S-<left>" 'windsize-left
       "M-S-<down>" 'windsize-down
@@ -208,8 +273,15 @@
 
 (load! "lisp/use-packages")
 
+(load! "lisp/defcustoms.el")
+
 (dolist (type '(major minor))
   (let ((folder (format "~/.doom.d/lisp/%s/" type)))
     (dolist (file (file-expand-wildcards (concat folder "*.el")))
       (let ((f (file-name-sans-extension (file-name-nondirectory file))))
         (eval `(after! ,(intern f) (load! ,f ,folder)))))))
+
+(after! projectile
+    (projectile-register-project-type 'julia '("Project.toml")
+                                    :project-file "Project.toml"
+                                    :test "julia -e \"using Pkg; Pkg.test()\""))

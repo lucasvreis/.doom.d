@@ -235,18 +235,18 @@ Para desabilitar as mensagens chatas:
   (load! "script/prettify-latex-autogen" doom-private-dir)
   (setq tex--prettify-symbols-alist
         (append
-          '(("\\left" . ?ₗ)
-            ("\\right" . ?ᵣ)
-            ("_n" . ?ₙ)
-            ("_k" . ?ₖ)
-            ("\\tilde" . ?˜)
-            ("\\dots" . ?…))
-          (prettify-utils-generate
-            ("^{-1}" "⁻¹")
-            ("_{i=1}" "ᵢ₌₁")
-            ("\\not\\subset" "⊄"))
-          prettify-mode--latex-autogen-alist
-          (bound-and-true-p tex--prettify-symbols-alist))))
+         '(("\\left" . ?ₗ)
+           ("\\right" . ?ᵣ)
+           ("_n" . ?ₙ)
+           ("_k" . ?ₖ)
+           ("\\tilde" . ?˜)
+           ("\\dots" . ?…))
+         (prettify-utils-generate
+          ("^{-1}" "⁻¹")
+          ("_{i=1}" "ᵢ₌₁")
+          ("\\not\\subset" "⊄"))
+         prettify-mode--latex-autogen-alist
+         (bound-and-true-p tex--prettify-symbols-alist))))
 
 (defun setup-latex-prettify ()
   (set (make-local-variable 'prettify-symbols-alist) tex--prettify-symbols-alist)

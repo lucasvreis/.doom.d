@@ -5,6 +5,13 @@
       org-hide-emphasis-markers t
       org-highlight-latex-and-related '(latex script))
 
+(set-popup-rule! "\*Org Src .+\*"
+  :actions '(display-buffer-pop-up-frame)
+  :size 0.5)
+
+  ;; :actions '(display-buffer-same-window)
+  ;; :side 'right)
+
 (add-hook! 'org-mode-hook #'org-appear-mode)
 
 (after! org-appear

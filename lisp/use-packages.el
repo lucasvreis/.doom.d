@@ -35,3 +35,5 @@
 
 (use-package scroll-on-drag
   :bind ([down-mouse-2] . #'scroll-on-drag))
+(use-package mamimo
+  :hook ((org-mode latex-mode markdown-mode) . mamimo-mode))

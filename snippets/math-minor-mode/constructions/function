@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: function
+# key: fun
+# condition: (lambda () not (texmathp))
+# --
+\\(${1:f} \\colon ${2:A} \\to ${3:B}\\)$0

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: anglebrackets
+# uuid: anglebrackets
+# key: <>
+# condition: (texmathp)
+# --
+\\langle $1 \\rangle$0

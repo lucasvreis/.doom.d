@@ -1,0 +1,3 @@
+[submodule "lisp/lib/mamimo"]
+	path = lisp/lib/mamimo
+	url = ./lisp/lib/mamimo/

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: braces-angle
+# binding: <
+# condition: (and (eq (char-before) ?\\) (texmathp))
+# --
+langle $1 \\rangle$0

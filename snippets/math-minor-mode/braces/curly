@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: braces-curly
+# binding: {
+# condition: (and (eq (char-before) ?\\) (texmathp))
+# --
+\{ $1 \\\}$0

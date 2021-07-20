@@ -1,9 +1,0 @@
-# key: nil
-# name: dispmath
-# expand-env: ( (yas-also-auto-indent-first-line t) )
-# binding: M-D
-# condition: (not (texmathp))
-# --
-`()`
-\\[ $1 \\]
-$0

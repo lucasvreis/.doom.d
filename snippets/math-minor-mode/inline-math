@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: inline-math
+# binding: SPC
+# condition: (and (eq (char-before) ? ) (not (texmathp)) (not (looking-back "^ +")))
+# --
+\\($1\\)$0

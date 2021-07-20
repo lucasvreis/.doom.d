@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: bigcurlybraces
-# key: bcb
-# --
-\\left\\\{$1\\right\\\}$0

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: seja...
+# uuid: seja
+# key: sj
+# condition:t
+# --
+Seja \\(${1:$$(replace-regexp-in-string " ee" "\\\\\\\\) e \\\\\\\\(" (replace-regexp-in-string ",," "\\\\\\\\), \\\\\\\\(" yas-text))}\\)$0

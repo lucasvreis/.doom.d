@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: lemma
+# uuid: lemma
+# key: lemma
+# condition: t
+# --
+#+begin_lemma
+$1
+#+end_lemma
+
+$0

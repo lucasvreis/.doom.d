@@ -24,7 +24,7 @@
        ;;helm              ; the *other* search engine for love and life
        ;; ido               ; the other *other* search engine...
        ;;(ivy +prescient +icons +childframe)               ; a search engine for love and life
-       (selectrum)
+       vertico
 
        :ui
        deft            ; notational velocity for Emacs
@@ -42,8 +42,8 @@
        ;; nav-flash         ; blink cursor line after big motions
        ;; neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
-       (popup +all)   ; tame sudden yet inevitable temporary windows
-       tabs              ; a tab bar for Emacs
+       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       ;; tabs              ; a tab bar for Emacs
        treemacs          ; a project drawer, like neotree but cooler
        ;; unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
@@ -62,7 +62,7 @@
        multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
        (parinfer +rust)          ; turn lisp into python, sort of
-       ;; rotate-text       ; cycle region at point between text candidates
+       rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
        word-wrap         ; soft wrapping with -aware indent
 
@@ -85,7 +85,7 @@
        ;; grammar           ; tasing grammar mistake every you make
 
        :tools
-       ;; bibtex
+       bibtex
        ;;ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
        ;;direnv
@@ -131,7 +131,7 @@
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;gdscript          ; the language you waited for
        ;;(go +lsp)         ; the hipster dialect
-       ;;(haskell +dante)  ; a language that's lazier than I am
+       (haskell +lsp)  ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ; a language you can depend on
        ;;json              ; At least it ain't XML
@@ -148,7 +148,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +dragndrop +roam)               ; organize your plain life in plain text
+       (org +noter +pomodoro +present +pretty +dragndrop +roam)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -187,4 +187,3 @@
 (when doom-debug-p
   (require 'benchmark-init)
   (add-hook 'doom-first-input-hook #'benchmark-init/deactivate))
-

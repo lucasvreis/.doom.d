@@ -1,12 +1,15 @@
 ;;; lisp/major/org.el -*- lexical-binding: t; -*-
 
+(require 'texmathp)
+
 (setq org-latex-packages-alist '(("" "tikz" t) ("" "tikz-cd" t))
       org-support-shift-select t
       org-hide-emphasis-markers t
+      org-appear-autolinks t
+      org-src-window-setup 'plain
       org-highlight-latex-and-related '(latex script))
 
 (set-popup-rule! "\*Org Src .+\*"
-  :actions '(display-buffer-pop-up-frame)
   :size 0.5)
 
   ;; :actions '(display-buffer-same-window)
@@ -24,7 +27,20 @@
 (add-hook! org-mode
   (define-prettify-symbols)
   (setup-latex-prettify)
-  (prettify-symbols-mode +1))
+
+  (prettify-symbols-mode +1)
+
+  (auto-fill-mode +1)
+
+  (setq real-auto-save-interval 0.2)
+
+  (turn-off-smartparens-mode)
+  (turn-on-show-smartparens-mode)
+
+  ;; (flyspell-mode +1) -- todo: set this only for some directories
+
+  (toggle-truncate-lines +1)
+  (ws-butler-mode -1))
 
 ;; ------------- Org Toc -------------------
 
@@ -120,7 +136,7 @@
 (map! :map 'evil-org-mode-map
       :leader
       :desc "Table of contents"
-      "o c" 'custom-org-toc-show)
+      "o c" #'custom-org-toc-show)
 
 (map! :map 'org-toc-mode-map
       :n "C-?"  #'org-toc-help
@@ -134,11 +150,9 @@
       :n "f"    #'org-toc-follow-mode
       :n "ç"    #'outline-show-children)
 
+(add-to-list
+ '+company-backend-alist
+ '(org-mode (:separate company-math-symbols-latex company-dabbrev company-ispell company-capf)))
 
-;; (add-to-list
-;;  '+company-backend-alist
-;;  ((org-mode company-capf)
-;;   (text-mode
-;;    (:separate company-dabbrev company-yasnippet company-ispell))
-;;   (prog-mode company-capf company-yasnippet)
-;;   (conf-mode company-capf company-dabbrev-code company-yasnippet)))
+(map! :map 'evil-org-mode-map
+      :i "C-l" #'flyspell-correct-move)

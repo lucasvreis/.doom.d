@@ -11,7 +11,7 @@
   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 ;; (use-package mini-frame
-;;   :after selectrum
+;;   :after (:any selectrum vertico)
 ;;   :config
 ;;   (mini-frame-mode)
 ;;   (setq x-gtk-resize-child-frames 'resize-mode)
@@ -35,5 +35,20 @@
 
 (use-package scroll-on-drag
   :bind ([down-mouse-2] . #'scroll-on-drag))
+
+(defun yas-get-snippet (mode key)
+       (yas--fetch (yas--get-snippet-tables mode) key))
+
+(use-package laas
+  :commands (laas-mode))
+
+(use-package which-key-posframe
+  :config
+  (setq which-key-posframe-poshandler 'posframe-poshandler-frame-bottom-center)
+  (which-key-posframe-mode))
+
+(use-package lean4-mode
+  :commands (lean4-mode))
+
 (use-package mamimo
   :hook ((org-mode latex-mode markdown-mode) . mamimo-mode))

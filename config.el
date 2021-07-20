@@ -1,41 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq doom-theme 'doom-flatwhite)
+(setq doom-theme 'doom-shades-of-purple)
 
-;; Deixa a seleção menos distrativa
-(defvar custom-themes-exclude
-  '(doom-acario-light
-    doom-acario-dark
-    doom-badger
-    doom-dark+
-    doom-henna
-    doom-homage-white
-    doom-Iosvkem
-    doom-1337
-    doom-molokai
-    doom-sourcerer
-    doom-peacock
-    doom-wilmersdorf
-    doom-manegarm
-    doom-ephemeral
-    doom-nova
-    doom-opera
-    doom-zenburn
-    doom-ayu-mirage
-    doom-vibrant
-    doom-ir-black
-    doom-old-hope
-    doom-miramare
-    doom-monokai-spectrum
-    doom-monokai-ristretto))
-
-(advice-add 'custom-available-themes :filter-return
-            (lambda (l)
-              (seq-difference
-               (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
-               custom-themes-exclude #'eq)))
-
-(setq doom-font                (font-spec :family "JetBrains Mono" :size 19)
+(setq doom-font                (font-spec :family "VictorMono Nerd Font Mono" :size 19 :weight 'semibold)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 19)
       doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light)
       doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
@@ -51,12 +18,14 @@
 
   '(yas-field-highlight-face :box (:color "dark green") :inherit nil)
 
-  '(doom-modeline-buffer-modified :foreground "orange")
+  '(mode-line :height 110 :family "JuliaMono")
+  '(mode-line-inactive :height 110 :family "JuliaMono")
+  '(doom-modeline-buffer-modified :foreground "#c63")
   '(doom-modeline-info :foreground "white")
-  `(org-latex-and-related :background ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
+  `(org-latex-and-related :foreground ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
 
 (custom-theme-set-faces! 'doom-flatwhite
-  `(org-latex-and-related :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
+  `(org-latex-and-related :foreground nil :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
 
 (setq all-the-icons-scale-factor 0.88)
 
@@ -110,50 +79,6 @@
 
 (defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
 
-(defun custom-tex--prettify-symbols-compose-p (_start end _match)
-  (or
-   ;; If the matched symbol doesn't end in a word character, then we
-   ;; simply allow composition.  The symbol is probably something like
-   ;; \|, \(, etc.
-   (not (eq ?w (char-syntax (char-before end))))
-   ;; Else we look at what follows the match in order to decide.
-   (let* ((after-char (char-after end))
-          (after-syntax (char-syntax after-char)))
-     (not (or
-           ;; Don't compose \alpha@foo.
-           (eq after-char ?@)
-           ;; The \alpha in \alpha2 or \alpha-\beta may be composed but
-           ;; of course \alphax may not.
-           (and (eq after-syntax ?w)
-                (not (memq after-char
-                           '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9 ?+ ?- ?' ?\" ?$ ?_))))
-           ;; Don't compose inside verbatim blocks.
-           (eq 2 (nth 7 (syntax-ppss))))))))
-
-(defun define-prettify-symbols ()
-  (require 'prettify-utils)
-  (require 'tex-mode)
-  (load! "script/prettify-latex-autogen" doom-private-dir)
-  (setq tex--prettify-symbols-alist
-        (append
-          '(("\\left" . ?ₗ)
-            ("\\right" . ?ᵣ)
-            ("_n" . ?ₙ)
-            ("_k" . ?ₖ)
-            ("\\tilde" . ?˜)
-            ("\\dots" . ?…))
-          (prettify-utils-generate
-            ("^{-1}" "⁻¹")
-            ("_{i=1}" "ᵢ₌₁")
-            ("\\not\\subset" "⊄"))
-          prettify-mode--latex-autogen-alist
-          (bound-and-true-p tex--prettify-symbols-alist))))
-
-(defun setup-latex-prettify ()
-  (set (make-local-variable 'prettify-symbols-alist) tex--prettify-symbols-alist)
-  (add-function :override (local 'prettify-symbols-compose-predicate)
-                #'custom-tex--prettify-symbols-compose-p))
-
 (when (display-graphic-p)
   (setq good-scroll-duration 0.08)
   (good-scroll-mode 1))
@@ -164,9 +89,14 @@
 
 (setq-default fill-column 80)
 
+(setq company-idle-delay 0.01
+      company-minimum-prefix-length 4)
+
 (setq mouse-drag-and-drop-region t
       mouse-drag-and-drop-region-cut-when-buffers-differ t
       mouse-drag-and-drop-region-show-tooltip nil)
+
+(setq default-input-method "TeX")
 
 ;; FIXME
 (advice-add 'save-buffer :around #'advice--inhibit-message)
@@ -176,10 +106,24 @@
 (add-hook! 'text-mode-hook
            (abbrev-mode +1))
 
+(setq abbrev-file-name (concat doom-private-dir "abbrev_defs"))
+
 (pcre-mode +1)
 
 (require 'context-menu)
 (map! [mouse-3] 'my-context-menu)
+
+(setq +popup-defauts
+      '(:side bottom
+        :height 0.3
+        :width 130
+        :quit t
+        :select ignore
+        :ttl 5))
+
+(setq +popup-default-alist
+      '((window-height . 0.3)
+        (reusable-frames . visible)))
 
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
@@ -200,10 +144,17 @@
 (map! :i "C-x" 'evil-delete)
 
 ;; no dia em que eu precisar usar teclado americano, eu vou me arrepender...
+
+(map! :map minibuffer-local-map
+      "C-k" #'next-line
+      "C-l" #'previous-line
+      :i "C-k" #'next-line
+      :i "C-l" #'previous-line)
+
 (map! :map evil-motion-state-map
       "j" 'evil-backward-char
-      "k" 'evil-next-line
-      "l" 'evil-previous-line
+      "k" 'evil-next-visual-line
+      "l" 'evil-previous-visual-line
       "ç" 'evil-forward-char)
 
 (map! :map evil-window-map
@@ -257,10 +208,15 @@
       :desc "New snipet" "s" #'+snippets/new
       :desc "New alias" "a" #'+snippets/new-alias)
 
-(map! "M-S-<right>" 'windsize-right
-      "M-S-<left>" 'windsize-left
-      "M-S-<down>" 'windsize-down
-      "M-S-<up>" 'windsize-up)
+(map! :i "C-M-x" ctl-x-map)
+
+;; (evil-define-motion search-previous-and-recenter (count)
+;;   :jump t
+;;   :type exclusive
+;;   (evil-ex-search-previous count)
+;;   (call-interactively #'evil-scroll-line-to-center))
+
+;; (map! :n [remap evil-ex-search-previous] #'search-previous-and-recenter)
 
 (map! "M-j" 'drag-stuff-down
       "M-k" 'drag-stuff-up)

@@ -1,7 +1,8 @@
 ;;; lisp/minor/evil.el -*- lexical-binding: t; -*-
 
 (setq evil-shift-round nil
-      evil-cross-lines t)
+      evil-cross-lines t
+      evil-respect-visual-line-mode t)
 
 (defun evil-shift-width-elisp-advice (fun &rest r)
   (if (eq major-mode 'emacs-lisp-mode)

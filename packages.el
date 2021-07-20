@@ -20,13 +20,12 @@
 ;; doom
 (package! ispell :disable t)
 (package! hl-line :disable t)
-(package! windsize)
 (package! good-scroll)
 (package! smooth-scrolling)
 (package! scroll-on-drag)
 (package! nyan-mode)
 
-(package! mini-frame :disable t)
+(package! mini-frame)
 
 ;; Tree-sitter
 (package! tree-sitter)
@@ -38,6 +37,14 @@
 (unpin! company-box)
 
 (package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))
-(package! consult :recipe (:host github :repo "minad/consult" :branch "preview-debounce2"))
 (unpin! consult)
 (unpin! doom-themes)
+
+(package! company-math)
+(package! math-symbol-lists)
+(package! company-math)
+(package! real-auto-save)
+(package! which-key-posframe)
+(unpin! vertico)
+
+(package! elcord)

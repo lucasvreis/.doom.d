@@ -19,6 +19,4 @@
 (add-hook! (LaTeX-mode latex-mode)
   (LaTeX-math-mode +1)
   (hl-todo-mode +1)
-  (auto-fill-mode +1)
-  (define-prettify-symbols)
-  (prettify-symbols-mode +1))
+  (auto-fill-mode +1))

@@ -25,11 +25,6 @@
 (plist-put org-format-latex-options :scale 1.3)
 
 (add-hook! org-mode
-  (define-prettify-symbols)
-  (setup-latex-prettify)
-
-  (prettify-symbols-mode +1)
-
   (auto-fill-mode +1)
 
   (setq real-auto-save-interval 0.2)
@@ -39,7 +34,6 @@
 
   ;; (flyspell-mode +1) -- todo: set this only for some directories
 
-  (toggle-truncate-lines +1)
   (ws-butler-mode -1))
 
 ;; ------------- Org Toc -------------------

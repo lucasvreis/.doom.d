@@ -24,7 +24,7 @@
        ;;helm              ; the *other* search engine for love and life
        ;; ido               ; the other *other* search engine...
        ;;(ivy +prescient +icons +childframe)               ; a search engine for love and life
-       vertico
+       (vertico +icons)
 
        :ui
        deft            ; notational velocity for Emacs
@@ -38,7 +38,7 @@
        ;;indent-guides     ; highlighted indent columns
        ;; ligatures         ; ligatures and symbols to make your code pretty again
        ;; minimap           ; show a map of the code on the side
-       modeline          ; snazzy, Atom-inspired modeline, plus AP
+       modeline           ; snazzy, Atom-inspired modeline, plus AP
        ;; nav-flash         ; blink cursor line after big motions
        ;; neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
@@ -81,7 +81,7 @@
 
        :checkers
        (syntax +childframe)              ; tasing you for every semicolon you forget
-       (spell +flyspell)             ; tasing you for misspelling mispelling
+       (spell +flyspell +hunspell)             ; tasing you for misspelling mispelling
        ;; grammar           ; tasing grammar mistake every you make
 
        :tools
@@ -139,7 +139,7 @@
        (javascript +lsp)        ; all(hope(abandon(ye(who(enter(here))))))
        (julia +lsp)             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
-       (latex +lsp +latexmk)             ; writing papers in Emacs has never been so fun
+       (latex +latexmk)             ; writing papers in Emacs has never been so fun
        ;; lean
        ;;factor
        ;;ledger            ; an accounting system in Emacs
@@ -148,7 +148,7 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +noter +pomodoro +present +pretty +dragndrop +roam)               ; organize your plain life in plain text
+       (org +noter +pomodoro +present +dragndrop +roam2)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -170,6 +170,9 @@
        web               ; the tubes
        yaml              ; JSON, but readable
 
+       :app
+       everywhere
+
        :config
        literate
        (default +bindings +smartparens)
@@ -178,6 +181,9 @@
 
        :my-ui
        olivetti
+
+       :my-checkers
+       languagetool
 
        :my-editor
        notes

@@ -1,16 +1,9 @@
-;;; lisp/minor/evil.el -*- lexical-binding: t; -*-
-
-(setq evil-shift-round nil
-      evil-cross-lines t
-      evil-respect-visual-line-mode t)
-
-(defun evil-shift-width-elisp-advice (fun &rest r)
+;;; tangle/minor/evil.el -*- lexical-binding: t; -*-
+(defadvice! ~evil-shift-width-elisp-advice (fun &rest r)
+  :around #'evil-shift-width-elisp-advice
   (if (eq major-mode 'emacs-lisp-mode)
       (setq evil-shift-width 2)
     (apply fun r)))
-
-(advice-add 'doom--setq-evil-shift-width-for-after-change-major-mode-h
-            :around #'evil-shift-width-elisp-advice)
 
 (defun evil-mc/toggle-cursor-on-click (event)
   "Add a cursor where you click, or remove a fake cursor that is
@@ -31,6 +24,5 @@ already there."
             (save-excursion
               (goto-char pt)
               (evil-mc-make-cursor-here)))))))
-
 (map! "C-<down-mouse-1>" nil)
 (map! "C-<mouse-1>" #'evil-mc/toggle-cursor-on-click)

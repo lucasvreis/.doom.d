@@ -1,65 +1,82 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq doom-theme 'doom-shades-of-purple)
+(setq +zen-text-scale 0)
 
-(setq doom-font                (font-spec :family "VictorMono Nerd Font Mono" :size 19 :weight 'semibold)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 19)
-      doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light)
-      doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
+(setq doom-theme 'doom-tomorrow-night)
+
+(defvar my/custom-themes-exclude
+  '(doom-acario-light
+    doom-acario-dark
+    doom-badger
+    doom-dark+
+    doom-henna
+    doom-homage-white
+    doom-Iosvkem
+    doom-1337
+    doom-molokai
+    doom-sourcerer
+    doom-peacock
+    doom-wilmersdorf
+    doom-manegarm
+    doom-ephemeral
+    doom-nova
+    doom-opera
+    doom-zenburn
+    doom-ayu-mirage
+    doom-vibrant
+    doom-ir-black
+    doom-old-hope
+    doom-miramare
+    doom-monokai-spectrum
+    doom-monokai-ristretto))
+
+(advice-add 'custom-available-themes :filter-return
+            (lambda (l)
+              (seq-difference
+               (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
+               my/custom-themes-exclude #'eq)))
+
+(setq doom-font                (font-spec :family "Iosevka" :size 22)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 19 :weight 'light)
+      doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light))
+      ;; doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
 
 ;; Colocamos uma ordem de prioridade para tentar ter todos os unicodes e emojis.
 (add-hook! 'after-setting-font-hook
-  (set-fontset-font t 'unicode (font-spec :family "JuliaMono"))
-  (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
+  (set-fontset-font t 'unicode "JuliaMono")
+  (set-fontset-font t 'unicode "Twemoji" nil 'append))
 
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant oblique)
+  '(font-lock-keyword-face :slant oblique))
 
-  '(yas-field-highlight-face :box (:color "dark green") :inherit nil)
+(custom-set-faces!
+  `(yas-field-highlight-face
+    :inherit nil
+    :background ,(doom-blend "#99f056" (doom-color 'bg) 0.1)))
 
-  '(mode-line :height 110 :family "JuliaMono")
-  '(mode-line-inactive :height 110 :family "JuliaMono")
-  '(doom-modeline-buffer-modified :foreground "#c63")
-  '(doom-modeline-info :foreground "white")
+(custom-set-faces!
   `(org-latex-and-related :foreground ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
-
 (custom-theme-set-faces! 'doom-flatwhite
   `(org-latex-and-related :foreground nil :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
 
 (setq all-the-icons-scale-factor 0.88)
 
+(custom-set-faces!
+  '(mode-line :height 110 :family "JuliaMono")
+  '(mode-line-inactive :height 110 :family "JuliaMono")
+  '(doom-modeline-buffer-modified :foreground "#c63")
+  '(doom-modeline-info :foreground "white"))
+(setq! +modeline-height 26)
+
 (setq window-divider-default-bottom-width 2   ; default is 1
       window-divider-default-right-width  2)  ; default is 1
-
-;; Desabilita o modeline
-(add-hook! '+doom-dashboard-mode-hook (hide-mode-line-mode 1))
 
 ;; Desabilita o "benchmark"
 (remove-hook 'window-setup-hook #'doom-display-benchmark-h)
 
-(defun doom-dashboard-draw-ascii-emacs-banner-fn ()
-  (let* ((banner
-          '("" ""
-            "   o__  __o   \\o__ __o__ __o      o__ __o/      __o__      __o__"
-            "  /v      |>   |     |     |>    /v     |      />  \\      />  \\ "
-            " />      //   / \\   / \\   / \\   />     / \\   o/           \\o    "
-            " \\o    o/     \\o/   \\o/   \\o/   \\      \\o/  <|             v\\   "
-            "  v\\  /v __o   |     |     |     o      |    \\\\             <\\  "
-            "   <\\/> __/>  / \\   / \\   / \\    <\\__  / \\    _\\o__</  _\\o__</  "
-            ""))
-         (longest-line (apply #'max (mapcar #'length banner))))
-    (put-text-property
-     (point)
-     (dolist (line banner (point))
-       (insert (+doom-dashboard--center
-                +doom-dashboard--width
-                (concat
-                 line (make-string (max 0 (- longest-line (length line)))
-                                   32)))
-               "\n"))
-     'face 'doom-dashboard-banner)))
-(setq +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-emacs-banner-fn)
+(setq +doom-dashboard-functions '(doom-dashboard-widget-shortmenu
+                                  doom-dashboard-widget-loaded))
 
 (custom-set-faces!
   '(doom-dashboard-banner
@@ -70,6 +87,8 @@
   (normal-top-level-add-subdirs-to-load-path))
 (add-load-path! "lisp/lib")
 
+(defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
+
 (defun string-list-p (x) (and (listp x) (--all? (stringp it) x)))
 
 (defun advice-unadvice (sym)
@@ -77,14 +96,9 @@
   (interactive "aFunction symbol: ")
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 
-(defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
-
-(when (display-graphic-p)
-  (setq good-scroll-duration 0.08)
-  (good-scroll-mode 1))
-
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
       mouse-wheel-progressive-speed nil ;; don't accelerate scrolling
+      confirm-kill-emacs nil
       scroll-step 1) ;; keyboard scroll one line at a time
 
 (setq-default fill-column 80)
@@ -98,10 +112,9 @@
 
 (setq default-input-method "TeX")
 
-;; FIXME
-(advice-add 'save-buffer :around #'advice--inhibit-message)
+(setq text-scale-mode-step 1.05)
 
-(blink-cursor-mode +1)
+(advice-add 'save-buffer :around #'advice--inhibit-message)
 
 (add-hook! 'text-mode-hook
            (abbrev-mode +1))
@@ -128,11 +141,132 @@
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
 (setq vterm-shell "zsh"
-      ispell-dictionary "brasileiro"
       delete-by-moving-to-trash t
       mouse-autoselect-window nil)
 
 ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+
+(use-package prettify-utils
+  :after (org latex))
+
+(use-package tree-sitter
+  :after doom-first-file-hook
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package scroll-on-drag
+  :bind ([down-mouse-2] . #'scroll-on-drag))
+
+(defun yas-get-snippet (mode key)
+       (yas--fetch (yas--get-snippet-tables mode) key))
+
+(use-package laas
+  :commands (laas-mode))
+
+(use-package lean4-mode
+  :commands (lean4-mode))
+
+(use-package mamimo
+  :hook ((org-mode latex-mode markdown-mode) . mamimo-mode))
+
+(setq org-directory "~/Lucas/org"
+      org-latex-packages-alist '(("" "tikz" t) ("" "tikz-cd" t))
+      org-support-shift-select t
+      org-hide-emphasis-markers t
+      org-src-window-setup 'plain
+      org-highlight-latex-and-related '(native script))
+
+(push 'org-mode git-gutter:disabled-modes)
+
+(auto-fill-mode +1)
+(setq-local real-auto-save-interval 0.2)
+(turn-off-smartparens-mode)
+(turn-on-show-smartparens-mode)
+(ws-butler-mode -1)
+
+(my/org-hide-properties)
+
+(setq ispell-dictionary "pt_BR,en_US"
+      ispell-personal-dictionary (concat doom-private-dir ".hunspell-personal"))
+
+(unless (file-exists-p ispell-personal-dictionary)
+  (write-region "" nil ispell-personal-dictionary nil 0))
+
+(after! ispell
+  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
+  (ispell-set-spellchecker-params))
+
+(after! projectile
+    (projectile-register-project-type 'julia '("Project.toml")
+                                    :project-file "Project.toml"
+                                    :test "julia -e \"using Pkg; Pkg.test()\""))
+
+(defcustom treemacs-file-ignore-extensions
+  '("aux" "ptc" "fdb_latexmk" "fls" "synctex.gz" "toc"         ;; LaTeX
+    "glg"  "glo"  "gls"  "glsdefs"  "ist"  "acn"  "acr"  "alg" ;; LaTeX - glossary
+    "mw"                                                       ;; LaTeX - pgfplots
+    "pdfa.xmpi")                                               ;; LaTeX - pdfx
+  "File extension which `treemacs-ignore-filter' will ensure are ignored"
+  :safe #'string-list-p)
+
+(defcustom treemacs-file-ignore-globs
+  '("*/_minted-*"                                        ;; LaTeX
+     "*/.auctex-auto" "*/_region_.log" "*/_region_.tex") ;; AucTeX
+  "Globs which will are transformed to `treemacs-file-ignore-regexps'
+which `treemacs-ignore-filter' will ensure are ignored"
+  :safe #'string-list-p)
+
+(setq doom-themes-treemacs-bitmap-indicator-width 8)
+
+(setq elcord-editor-icon "emacs_icon"
+      elcord-display-elapsed nil
+      elcord--editor-name "Emacs"
+      elcord-use-major-mode-as-main-icon t)
+
+(setq evil-shift-round nil
+      evil-cross-lines t
+
+      ;; Respeita linhas visuais
+      evil-respect-visual-line-mode t
+
+      ;; Substitui vários matches por linha no evil-ex
+      evil-ex-substitute-global t)
+
+(setq flyspell-lazy-idle-seconds 0.4)
+
+(map! :ni "C-." #'flyspell-correct-move)
+
+(setq iedit-toggle-key-default nil)
+
+(setq parinfer-rust-preferred-mode "indent")
+
+(setq mamimo-greek-abbrevs-prefix "'")
+(add-hook! 'mamimo-mode-hook
+  (evil-tex-mode +1))
+
+(defface my-mixed-pitch-face
+  '((t :family "Overpass" :weight semilight))
+  "Face for `mixed-pitch-mode'")
+(setq mixed-pitch-face 'my-mixed-pitch-face)
+
+(use-package org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autolinks nil))
+
+(dolist (type '(major minor features))
+  (let ((folder (format "~/.doom.d/lisp/%s/" type)))
+    (dolist (file (file-expand-wildcards (concat folder "*.el")))
+      (let ((f (file-name-sans-extension (file-name-nondirectory file))))
+        (eval `(after! ,(intern f) (load! ,f ,folder)))))))
+
+(dolist (type '(major minor features))
+  (let ((folder (format "%stangle/%s/" doom-private-dir type)))
+    (dolist (file (file-expand-wildcards (concat folder "*.el")))
+      (let ((f (file-name-sans-extension (file-name-nondirectory file))))
+        (eval `(after! ,(intern f) (load! ,f ,folder)))))))
 
 (map! "C-S-s" 'isearch-forward)
 (map! :egni "C-s" 'save-buffer)
@@ -143,52 +277,11 @@
 (map! :i "C-S-z" 'evil-redo)
 (map! :i "C-x" 'evil-delete)
 
-;; no dia em que eu precisar usar teclado americano, eu vou me arrepender...
+(map! :map 'doom-leader-workspace-map
+      "}" #'+workspace/swap-right
+      "{" #'+workspace/swap-left)
 
-(map! :map minibuffer-local-map
-      "C-k" #'next-line
-      "C-l" #'previous-line
-      :i "C-k" #'next-line
-      :i "C-l" #'previous-line)
-
-(map! :map evil-motion-state-map
-      "j" 'evil-backward-char
-      "k" 'evil-next-visual-line
-      "l" 'evil-previous-visual-line
-      "ç" 'evil-forward-char)
-
-(map! :map evil-window-map
-      ;; Navigation
-      "j"       #'evil-window-left
-      "k"       #'evil-window-down
-      "l"       #'evil-window-up
-      "ç"       #'evil-window-right
-      "C-j"     #'evil-window-left
-      "C-k"     #'evil-window-down
-      "C-l"     #'evil-window-up
-      "C-ç"     #'evil-window-right
-      ;; Swapping windows
-      "J"       #'+evil/window-move-left
-      "K"       #'+evil/window-move-down
-      "L"       #'+evil/window-move-up
-      "Ç"       #'+evil/window-move-right)
-
-(map! :i "M-J" 'evil-backward-char
-      :i "M-K" 'evil-next-line
-      :i "M-L" 'evil-previous-line
-      :i "M-Ç" 'evil-forward-char)
-
-(after! treemacs (evil-define-key 'treemacs treemacs-mode-map "l" nil "h" nil))
-
-;; (evil-define-key '(visual normal) Info-mode-map "l" nil)
-(map! :map Info-mode-map :vn "l" nil)
-
-(map! :after treemacs
-      :map evil-treemacs-state-map
-      "j"      #'treemacs-COLLAPSE-action
-      "k"      #'treemacs-next-line
-      "l"      #'treemacs-previous-line
-      "ç"      #'treemacs-RET-action)
+(setq hydra-is-helpful nil)
 
 (defhydra window-height-hydra (evil-window-map)
   "window height"
@@ -221,23 +314,6 @@
 (map! "M-j" 'drag-stuff-down
       "M-k" 'drag-stuff-up)
 
-(map! :leader :desc "Centered mode" "t e" 'olivetti-mode)
-
 (map! :map lean-mode-map "M-." 'lean-find-definition)
 
 (map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
-
-(load! "lisp/use-packages")
-
-(load! "lisp/defcustoms.el")
-
-(dolist (type '(major minor))
-  (let ((folder (format "~/.doom.d/lisp/%s/" type)))
-    (dolist (file (file-expand-wildcards (concat folder "*.el")))
-      (let ((f (file-name-sans-extension (file-name-nondirectory file))))
-        (eval `(after! ,(intern f) (load! ,f ,folder)))))))
-
-(after! projectile
-    (projectile-register-project-type 'julia '("Project.toml")
-                                    :project-file "Project.toml"
-                                    :test "julia -e \"using Pkg; Pkg.test()\""))

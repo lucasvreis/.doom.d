@@ -1,10 +1,5 @@
 ;;; my-editor/notes/config.el -*- lexical-binding: t; -*-
 
-(use-package nroam
-  :after org-roam
-  :config
-  (add-hook 'org-mode-hook #'nroam-setup-maybe))
-
 (use-package! org-marginalia
   :commands org-marginalia-mode)
 

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: c-minor-tangle
+# key: cminor
+# condition: t
+# expand-env: ((yas-indent-line 'fixed))
+# --
+#+begin_src elisp :tangle tangle/minor/${1:name}.el
+$0
+#+end_src

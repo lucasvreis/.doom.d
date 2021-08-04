@@ -1,88 +1,160 @@
+:PROPERTIES:
+:ID:       677d2cee-3665-43f4-a895-6fe08f11eb9a
+:END:
 #+title: Minha Configuração do Emacs
+#+property: header-args :mkdirp yes
 
-* Conteúdo :toc:
-- [[#preliminares][Preliminares]]
-- [[#estético][Estético]]
-  - [[#tema][Tema]]
-  - [[#fontes][Fontes]]
-  - [[#faces-e-ícones][Faces e ícones]]
-  - [[#divisores-de-janelas][Divisores de janelas]]
-  - [[#dashboard][Dashboard]]
-- [[#minha-biblioteca][Minha biblioteca]]
-  - [[#pasta-bibioteca][Pasta-bibioteca]]
-  - [[#pequenas-funções][Pequenas funções]]
-  - [[#excluir-todos-os-conselhos][Excluir todos os conselhos]]
-  - [[#conselhos-úteis]["Conselhos" úteis]]
-- [[#emacs-em-geral][Emacs em geral]]
-  - [[#scroll][Scroll]]
-  - [[#edição-de-texto][Edição de texto]]
-  - [[#pesquisa--regex][Pesquisa & regex]]
-  - [[#menu-de-contexto][Menu de contexto]]
-  - [[#popups][Popups]]
-  - [[#outros][Outros]]
-  - [[#maximizar-a-janela][Maximizar a janela?]]
-- [[#atalhos-de-teclado][Atalhos de teclado]]
-  - [[#deixando-o-emacs-mais-familiar][Deixando o Emacs mais familiar]]
-  - [[#evil-abnt][Evil ABNT]]
-  - [[#hydras][Hydras]]
-  - [[#kitty-terminal][Kitty (Terminal)]]
-  - [[#edit-leader-key][Edit leader key]]
-  - [[#centralizar-ao-procurar-com-o-evil][Centralizar ao procurar com o evil]]
-  - [[#outros-1][Outros]]
-- [[#configurações-de-pacotes][Configurações de pacotes]]
-  - [[#projectile][Projectile]]
-
-* Preliminares
 Vamos usar o binding léxico:
-
 #+begin_src emacs-lisp
 ;;; -*- lexical-binding: t; -*-
+#+end_src
+
+* Doom
+** Zen
+Ver também [[file:lisp/minor/writeroom-mode.el][writeroom-mode]] e [[file:lisp/minor/mixed-pitch.el][mixed-pitch]].
+#+begin_src emacs-lisp
+(setq +zen-text-scale 0)
 #+end_src
 
 * Estético
 ** Tema
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-shades-of-purple)
+(setq doom-theme 'doom-tomorrow-night)
 #+end_src
-** Fontes
+*** Esconder temas
+
+Deixa a seleção menos distrativa, removendo os temas não-doom e os temas da
+lista abaixo.
 
 #+begin_src emacs-lisp
-(setq doom-font                (font-spec :family "VictorMono Nerd Font Mono" :size 20 :weight 'semibold)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 19)
-      doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light)
-      doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
+(defvar my/custom-themes-exclude
+  '(doom-acario-light
+    doom-acario-dark
+    doom-badger
+    doom-dark+
+    doom-henna
+    doom-homage-white
+    doom-Iosvkem
+    doom-1337
+    doom-molokai
+    doom-sourcerer
+    doom-peacock
+    doom-wilmersdorf
+    doom-manegarm
+    doom-ephemeral
+    doom-nova
+    doom-opera
+    doom-zenburn
+    doom-ayu-mirage
+    doom-vibrant
+    doom-ir-black
+    doom-old-hope
+    doom-miramare
+    doom-monokai-spectrum
+    doom-monokai-ristretto))
+
+(advice-add 'custom-available-themes :filter-return
+            (lambda (l)
+              (seq-difference
+               (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
+               my/custom-themes-exclude #'eq)))
+#+end_src
+** Faces
+*** Fontes
+
+#+begin_src emacs-lisp
+(setq doom-font                (font-spec :family "Iosevka" :size 22)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 19 :weight 'light)
+      doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light))
+      ;; doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
 
 ;; Colocamos uma ordem de prioridade para tentar ter todos os unicodes e emojis.
 (add-hook! 'after-setting-font-hook
-  (set-fontset-font t 'unicode (font-spec :family "JuliaMono"))
-  (set-fontset-font t 'unicode "Twemoji" nil 'prepend))
+  (set-fontset-font t 'unicode "JuliaMono")
+  (set-fontset-font t 'unicode "Twemoji" nil 'append))
 #+end_src
 
-** Faces e ícones
-
+*** Código (prog)
 Deixamos os comentários itálicas, e os ~keywords~ oblíquos.
 
 #+begin_src emacs-lisp
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
-  '(font-lock-keyword-face :slant oblique)
+  '(font-lock-keyword-face :slant oblique))
+#+end_src
 
-  '(yas-field-highlight-face :box (:color "dark green") :inherit nil)
-
-  '(mode-line :height 110 :family "JuliaMono")
-  '(mode-line-inactive :height 110 :family "JuliaMono")
-  '(doom-modeline-buffer-modified :foreground "#c63")
-  '(doom-modeline-info :foreground "white")
+*** @Yasnippet
+#+begin_src emacs-lisp
+(custom-set-faces!
+  `(yas-field-highlight-face
+    :inherit nil
+    :background ,(doom-blend "#99f056" (doom-color 'bg) 0.1)))
+#+end_src
+*** @Org
+#+begin_src emacs-lisp
+(custom-set-faces!
   `(org-latex-and-related :foreground ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
-
 (custom-theme-set-faces! 'doom-flatwhite
   `(org-latex-and-related :foreground nil :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
 #+end_src
-
+*** Ícones
 Ajusta o tamanho dos ícones.
 
 #+begin_src emacs-lisp
 (setq all-the-icons-scale-factor 0.88)
+#+end_src
+
+** Modeline
+
+#+begin_src elisp :tangle tangle/minor/doom-modeline.el
+;;; tangle/minor/doom-modeline.el -*- lexical-binding: t; -*-
+
+(doom-modeline-def-segment buffer-name
+  "Display the current buffer's name, without any other information."
+  (concat
+    (doom-modeline-spc)
+    (doom-modeline--buffer-name)))
+
+(doom-modeline-def-segment pdf-icon
+  "PDF icon from all-the-icons."
+  (concat
+    (doom-modeline-spc)
+    (doom-modeline-icon 'octicon "file-pdf" nil nil
+                        :face (if (doom-modeline--active)
+                                  'all-the-icons-red
+                                'mode-line-inactive)
+                        :v-adjust 0.02)))
+
+(defun doom-modeline-update-pdf-pages ()
+  "Update PDF pages."
+  (setq doom-modeline--pdf-pages
+        (let ((current-page-str (number-to-string (eval `(pdf-view-current-page))))
+              (total-page-str (number-to-string (pdf-cache-number-of-pages))))
+          (concat
+            (propertize
+              (concat (make-string (- (length total-page-str) (length current-page-str)) 32)
+                    " P" current-page-str)
+              'face 'mode-line)
+            (propertize (concat "/" total-page-str) 'face 'doom-modeline-buffer-minor-mode)))))
+
+(doom-modeline-def-segment pdf-pages
+  "Display PDF pages."
+  (if (doom-modeline--active) doom-modeline--pdf-pages
+    (propertize doom-modeline--pdf-pages 'face 'mode-line-inactive)))
+
+(doom-modeline-def-modeline 'pdf
+  '(bar window-number pdf-pages pdf-icon buffer-name)
+  '(misc-info matches major-mode process vcs))
+
+#+end_src
+
+#+begin_src emacs-lisp
+(custom-set-faces!
+  '(mode-line :height 110 :family "JuliaMono")
+  '(mode-line-inactive :height 110 :family "JuliaMono")
+  '(doom-modeline-buffer-modified :foreground "#c63")
+  '(doom-modeline-info :foreground "white"))
+(setq! +modeline-height 26)
 #+end_src
 
 ** Divisores de janelas
@@ -93,47 +165,24 @@ Ajusta o tamanho dos ícones.
 #+end_src
 
 ** Dashboard
-teste
 *** Estético
 
 Pequenas modificações ao dashboard:
 
 #+begin_src emacs-lisp
-;; Desabilita o modeline
-(add-hook! '+doom-dashboard-mode-hook (hide-mode-line-mode 1))
-
 ;; Desabilita o "benchmark"
 (remove-hook 'window-setup-hook #'doom-display-benchmark-h)
 #+end_src
 
 *** Banner
 
-Pequenos acrobatas, que tal?
-
 #+begin_src emacs-lisp
-(defun doom-dashboard-draw-ascii-emacs-banner-fn ()
-  (let* ((banner
-          '("" ""
-            "   o__  __o   \\o__ __o__ __o      o__ __o/      __o__      __o__"
-            "  /v      |>   |     |     |>    /v     |      />  \\      />  \\ "
-            " />      //   / \\   / \\   / \\   />     / \\   o/           \\o    "
-            " \\o    o/     \\o/   \\o/   \\o/   \\      \\o/  <|             v\\   "
-            "  v\\  /v __o   |     |     |     o      |    \\\\             <\\  "
-            "   <\\/> __/>  / \\   / \\   / \\    <\\__  / \\    _\\o__</  _\\o__</  "
-            ""))
-         (longest-line (apply #'max (mapcar #'length banner))))
-    (put-text-property
-     (point)
-     (dolist (line banner (point))
-       (insert (+doom-dashboard--center
-                +doom-dashboard--width
-                (concat
-                 line (make-string (max 0 (- longest-line (length line)))
-                                   32)))
-               "\n"))
-     'face 'doom-dashboard-banner)))
-(setq +doom-dashboard-ascii-banner-fn #'doom-dashboard-draw-ascii-emacs-banner-fn)
+(setq +doom-dashboard-functions '(doom-dashboard-widget-shortmenu
+                                  doom-dashboard-widget-loaded))
 #+end_src
+
+#+RESULTS:
+: ~/.doom.d/logo.png
 
 A fonte padrão é itálica e deixa os acrobatas tortos, vamos resolver isso:
 
@@ -155,38 +204,38 @@ Com algumas bibliotecas externas, por exemplo.
 (add-load-path! "lisp/lib")
 #+end_src
 
-** Pequenas funções
+** Funções (não interativas)
+*** Conselhos
+Para desabilitar as mensagens chatas:
+#+begin_src emacs-lisp
+(defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
+#+end_src
+
+*** Checa se objeto é uma lista de strings
 #+begin_src emacs-lisp
 (defun string-list-p (x) (and (listp x) (--all? (stringp it) x)))
 #+end_src
-** Excluir todos os conselhos
+
+** Funções (interativas)
+*** Excluir todos os conselhos
 #+begin_src emacs-lisp
 (defun advice-unadvice (sym)
   "Remove all advices from symbol SYM."
   (interactive "aFunction symbol: ")
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
 #+end_src
-** "Conselhos" úteis
-
-Para desabilitar as mensagens chatas:
-
-#+begin_src emacs-lisp
-(defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
-#+end_src
 
 * Emacs em geral
 ** Scroll
 #+begin_src emacs-lisp
-(when (display-graphic-p)
-  (setq good-scroll-duration 0.08)
-  (good-scroll-mode 1))
-
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
       mouse-wheel-progressive-speed nil ;; don't accelerate scrolling
       confirm-kill-emacs nil
       scroll-step 1) ;; keyboard scroll one line at a time
 #+end_src
+
 ** Edição de texto
+*** Atalhos
 *** Variáveis
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
@@ -200,25 +249,24 @@ Para desabilitar as mensagens chatas:
 
 (setq default-input-method "TeX")
 #+end_src
-*** Salvando
 
-Desabilita uma mensagem que rapidamente aparece na tela e some.
-
-Era para resolver algo que aparece com o ~literate~, mas não resolve e não sei
-como resolver.
+Deixa o =text-scale-mode= mais devagar.
 
 #+begin_src emacs-lisp
-;; FIXME
+(setq text-scale-mode-step 1.05)
+#+end_src
+*** Salvando
+Desabilita a mensagem de salvamento.
+
+#+begin_src emacs-lisp
 (advice-add 'save-buffer :around #'advice--inhibit-message)
 #+end_src
 
-*** Piscar o cursor
+*** Piscar o cursor :ARCHIVE:
 #+begin_src emacs-lisp
 (blink-cursor-mode +1)
 #+end_src
-
 *** Abbrev
-
 Meu deus, como eu passei tanto tempo (4 meses) sem saber da existência
 desta coisa MARAVILHOSA??? É INCRÍVEL!!!!
 
@@ -233,6 +281,7 @@ desta coisa MARAVILHOSA??? É INCRÍVEL!!!!
 #+begin_src emacs-lisp
 (pcre-mode +1)
 #+end_src
+
 ** Menu de contexto
 
 Retirado de:
@@ -244,7 +293,6 @@ Retirado de:
 #+end_src
 
 ** Popups
-
 #+begin_src emacs-lisp
 (setq +popup-defauts
       '(:side bottom
@@ -259,13 +307,13 @@ Retirado de:
         (reusable-frames . visible)))
 
 #+end_src
-** Outros
+
+** Outros :completion:
 
 #+begin_src emacs-lisp
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
 (setq vterm-shell "zsh"
-      ispell-dictionary "brasileiro"
       delete-by-moving-to-trash t
       mouse-autoselect-window nil)
 #+end_src
@@ -278,8 +326,537 @@ Maximizar a janela ao iniciar?
 ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 #+end_src
 
+* Configurações de pacotes
+** TODO Use-packages (temporário)
+
+Primeiro, alguns pacotes configurados com o =use-package=:
+
+#+begin_src emacs-lisp
+(use-package prettify-utils
+  :after (org latex))
+
+(use-package tree-sitter
+  :after doom-first-file-hook
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package scroll-on-drag
+  :bind ([down-mouse-2] . #'scroll-on-drag))
+
+(defun yas-get-snippet (mode key)
+       (yas--fetch (yas--get-snippet-tables mode) key))
+
+(use-package laas
+  :commands (laas-mode))
+
+(use-package lean4-mode
+  :commands (lean4-mode))
+
+(use-package mamimo
+  :hook ((org-mode latex-mode markdown-mode) . mamimo-mode))
+#+end_src
+
+** TODO Packages.el (temporário)
+
+Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el=.
+#+begin_src emacs-lisp :tangle packages.el
+;; -*- no-byte-compile: t; -*-
+;;; $DOOMDIR/packages.el
+
+;; latex
+;; (package! latex-preview-pane)
+(package! aas :recipe (:host github :repo "ymarco/auto-activating-snippets"))
+
+;; doom
+(package! writegood-mode :disable t)
+(package! hl-line :disable t)
+(package! smooth-scrolling)
+(package! scroll-on-drag)
+(package! nyan-mode)
+
+;; Tree-sitter
+(package! tree-sitter)
+(package! tree-sitter-langs)
+
+(package! lsp-treemacs)
+
+(unpin! lsp-mode)
+(unpin! company-box)
+(unpin! consult)
+(unpin! doom-themes)
+(unpin! vertico)
+(unpin! treemacs)
+
+(package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))
+
+(package! company-math)
+(package! math-symbol-lists)
+(package! company-math)
+(package! real-auto-save)
+#+end_src
+
+** Major modes
+*** Org
+**** Variáveis
+#+begin_src emacs-lisp
+(setq org-directory "~/Lucas/org"
+      org-latex-packages-alist '(("" "tikz" t) ("" "tikz-cd" t))
+      org-support-shift-select t
+      org-hide-emphasis-markers t
+      org-src-window-setup 'plain
+      org-highlight-latex-and-related '(native script))
+#+end_src
+
+**** Gutter
+
+O =git-gutter= não funciona bem com o =org-indent-mode=:
+
+#+begin_src emacs-lisp
+(push 'org-mode git-gutter:disabled-modes)
+#+end_src
+
+**** Configuração
+#+begin_src elisp :tangle tangle/major/org.el :noweb yes
+;;; tangle/major/org.el -*- lexical-binding: t; -*-
+(require 'org-src)
+(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
+
+(add-hook! org-mode
+    <<org-mode-hook>>
+    )
+
+(set-popup-rule! "\*Org Src .+\*"
+  :size 0.5)
+
+(setq org-preview-latex-default-process 'dvisvgm)
+(plist-put org-format-latex-options :scale 1.3)
+
+(add-to-list
+ '+company-backend-alist
+ '(org-mode (:separate company-math-symbols-latex company-dabbrev company-ispell company-capf)))
+
+(map! :map 'evil-org-mode-map
+      :i "C-l" #'flyspell-correct-move)
+
+(after! ox-latex
+  (add-to-list 'org-latex-classes
+            '("report-noparts"
+                "\\documentclass{report}"
+                ("\\chapter{%s}" . "\\chapter*{%s}")
+                ("\\section{%s}" . "\\section*{%s}")
+                ("\\subsection{%s}" . "\\subsection*{%s}")
+                ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+
+(map! :mode 'org-mode :g "C-S-s" #'org-latex-export-to-pdf)
+#+end_src
+
+**** Hook
+
+#+begin_src emacs-lisp :noweb-ref org-mode-hook
+(auto-fill-mode +1)
+(setq-local real-auto-save-interval 0.2)
+(turn-off-smartparens-mode)
+(turn-on-show-smartparens-mode)
+(ws-butler-mode -1)
+#+end_src
+
+**** Esconder =:properties:=
+
+Roubado do manual do Roam v2 (ou algo assim)
+
+#+begin_src elisp :tangle tangle/major/org.el
+(defun my/org-hide-properties ()
+  "Hide all org-mode headline property drawers in buffer. Could be
+slow if it has a lot of overlays."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+      (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+        (overlay-put ov_this 'display "")
+        (overlay-put ov_this 'hidden-prop-drawer t))))
+  (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+(defun my/org-show-properties ()
+  "Show all org-mode property drawers hidden by org-hide-properties."
+  (interactive)
+  (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+  (put 'org-toggle-properties-hide-state 'state 'shown))
+
+(defun my/org-toggle-properties ()
+  "Toggle visibility of property drawers."
+  (interactive)
+  (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+      (org-show-properties)
+    (org-hide-properties)))
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref org-mode-hook
+(my/org-hide-properties)
+#+end_src
+
+** Features
+*** @Org
+**** Org-roam
+
+#+begin_src elisp :tangle tangle/feature/org-roam.el
+;;; tangle/feature/org-roam.el -*- lexical-binding: t; -*-
+(setq org-roam-directory "~/Lucas/notas")
+
+(defadvice! +org-roam-reuse-windows (&rest r)
+  :before #'org-roam-preview-visit
+  :before #'org-roam-node-visit
+  (when org-roam-buffer-current-node
+    (let ((window (get-buffer-window
+                    (get-file-buffer
+                      (org-roam-node-file org-roam-buffer-current-node)))))
+      (when window (select-window window)))))
+
+(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
+  :around #'doom-modeline-buffer-file-name ; takes no args
+  (if (s-contains-p (expand-file-name org-roam-directory) (or buffer-file-name ""))
+      (replace-regexp-in-string
+       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
+       "🢔(\\1-\\2-\\3) "
+       (subst-char-in-string ?_ ?  buffer-file-name))
+    (funcall orig-fun)))
+#+end_src
+
+**** TODO Org-ql
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-ql)
+#+end_src
+
+**** Org-sidebar :ARCHIVE:
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-sidebar)
+#+end_src
+
+#+begin_src emacs-lisp
+(after! org-sidebar
+  (defun :org-sidebar-refresh ()
+    (interactive)
+    (let* ((source-buffer (current-buffer))
+           (sidebar-window (--first (window-parameter it 'org-sidebar-window)
+                                    (window-at-side-list nil org-sidebar-side))))
+      (when sidebar-window
+        (with-current-buffer (window-buffer sidebar-window)
+          (when (eq org-sidebar-source-buffer source-buffer)
+            (org-sidebar-refresh)))))))
+#+end_src
+.
+
+*** Ispell
+
+#+begin_src emacs-lisp
+(setq ispell-dictionary "pt_BR,en_US"
+      ispell-personal-dictionary (concat doom-private-dir ".hunspell-personal"))
+
+(unless (file-exists-p ispell-personal-dictionary)
+  (write-region "" nil ispell-personal-dictionary nil 0))
+#+end_src
+
+Cria um dicionário multilinguagem com português e inglês.
+
+#+begin_src elisp
+(after! ispell
+  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
+  (ispell-set-spellchecker-params))
+#+end_src
+
+*** @Projectile
+#+begin_src emacs-lisp
+(after! projectile
+    (projectile-register-project-type 'julia '("Project.toml")
+                                    :project-file "Project.toml"
+                                    :test "julia -e \"using Pkg; Pkg.test()\""))
+#+end_src
+
+*** TODO Hercules
+
+O Hercules é um "Hydra automático": ele deixa alguns keymaps persistentes, até
+que uma tecla fora do keymap seja pressionada.
+
+#+begin_src elisp :tangle packages.el
+(package! hercules)
+#+end_src
+
+Exemplos:
+#+begin_src emacs-lisp :tangle no
+(hercules-def
+ :toggle-funs #'macrostep-mode
+ :keymap 'macrostep-keymap)
+ 
+(define-key <map-symbol> (kbd "<key>") #'macrostep-mode)
+
+(hercules-def
+ ;; read further to see why this works
+ :toggle-funs #'org-babel-mode
+ :keymap 'org-babel-map
+ :transient t)
+ 
+;; tweak binding to taste
+(define-key org-mode-map (kbd "C-c C-v") #'org-babel-mode)
+#+end_src
+*** Treemacs
+**** Ignorar (esconder) algumas coisas
+
+Roubado do tecosaur.
+
+#+begin_src emacs-lisp
+(defcustom treemacs-file-ignore-extensions
+  '("aux" "ptc" "fdb_latexmk" "fls" "synctex.gz" "toc"         ;; LaTeX
+    "glg"  "glo"  "gls"  "glsdefs"  "ist"  "acn"  "acr"  "alg" ;; LaTeX - glossary
+    "mw"                                                       ;; LaTeX - pgfplots
+    "pdfa.xmpi")                                               ;; LaTeX - pdfx
+  "File extension which `treemacs-ignore-filter' will ensure are ignored"
+  :safe #'string-list-p)
+
+(defcustom treemacs-file-ignore-globs
+  '("*/_minted-*"                                        ;; LaTeX
+     "*/.auctex-auto" "*/_region_.log" "*/_region_.tex") ;; AucTeX
+  "Globs which will are transformed to `treemacs-file-ignore-regexps'
+which `treemacs-ignore-filter' will ensure are ignored"
+  :safe #'string-list-p)
+#+end_src
+**** Fringe only appears with width > 5
+#+begin_src emacs-lisp
+(setq doom-themes-treemacs-bitmap-indicator-width 8)
+#+end_src
+
+** Minor modes
+*** Centaur-tabs :ARCHIVE:
+
+#+begin_src elisp :tangle tangle/minor/centaur-tabs.el
+;;; tangle/minor/centaur-tabs.el -*- lexical-binding: t; -*-
+(defun centaur-tabs-buffer-groups ()
+  "`centaur-tabs-buffer-groups' control buffers' group rules.
+
+    Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+    All buffer name start with * will group to \"Emacs\".
+    Other buffer group by `centaur-tabs-get-group-name' with project name."
+  (list
+   (cond
+    ((derived-mode-p 'prog-mode)
+     "Editing")
+    ((derived-mode-p 'dired-mode)
+     "Dired")
+    ((memq major-mode '(helpful-mode
+                        help-mode))
+     "Help")
+    ((memq major-mode '(org-mode
+                        org-agenda-clockreport-mode
+                        org-src-mode
+                        org-agenda-mode
+                        org-beamer-mode
+                        org-indent-mode
+                        org-bullets-mode
+                        org-cdlatex-mode
+                        org-agenda-log-mode
+                        diary-mode))
+     "OrgMode")
+    ((memq major-mode '(vterm-mode
+                        term-mode
+                        julia-repl-mode))
+     "TermMode")
+    ((or (string-equal "*" (substring (buffer-name) 0 1))
+         (memq major-mode '(magit-process-mode
+                            magit-status-mode
+                            magit-diff-mode
+                            magit-log-mode
+                            magit-file-mode
+                            magit-blob-mode
+                            magit-blame-mode)))
+     "Emacs")
+    (t
+     (centaur-tabs-get-group-name (current-buffer))))))
+
+
+(setq centaur-tabs-style "bar"
+      centaur-tabs-set-bar nil
+      centaur-tabs-height 36
+      centaur-tabs-plain-icons t
+      centaur-tabs-label-fixed-length 10)
+
+(after! centaur-tabs
+  (centaur-tabs-group-by-projectile-project))
+#+end_src
+ 
+*** Elcord
+
+#+begin_src elisp :tangle packages.el
+(package! elcord)
+#+end_src
+
+#+begin_src emacs-lisp
+(setq elcord-editor-icon "emacs_icon"
+      elcord-display-elapsed nil
+      elcord--editor-name "Emacs"
+      elcord-use-major-mode-as-main-icon t)
+#+end_src
+
+*** @Evil
+**** Variáveis
+#+begin_src emacs-lisp
+(setq evil-shift-round nil
+      evil-cross-lines t
+
+      ;; Respeita linhas visuais
+      evil-respect-visual-line-mode t
+
+      ;; Substitui vários matches por linha no evil-ex
+      evil-ex-substitute-global t)
+#+end_src
+
+**** Shift
+Eu /realmente/ quero que o shift tenha 2 espaços na linguagem elisp.
+#+begin_src elisp :tangle tangle/minor/evil.el
+;;; tangle/minor/evil.el -*- lexical-binding: t; -*-
+(defadvice! ~evil-shift-width-elisp-advice (fun &rest r)
+  :around #'evil-shift-width-elisp-advice
+  (if (eq major-mode 'emacs-lisp-mode)
+      (setq evil-shift-width 2)
+    (apply fun r)))
+#+end_src
+
+**** Evil-mc
+
+Multicursores com o Ctrl + clique esquerdo do mouse (como no VSCode).
+#+begin_src elisp :tangle tangle/minor/evil.el
+(defun evil-mc/toggle-cursor-on-click (event)
+  "Add a cursor where you click, or remove a fake cursor that is
+already there."
+  (interactive "e")
+  (mouse-minibuffer-check event)
+  (require 'evil-mc)
+  ;; Use event-end in case called from mouse-drag-region.
+  ;; If EVENT is a click, event-end and event-start give same value.
+  (let ((position (event-end event)))
+    (if (not (windowp (posn-window position)))
+        (error "Position not in text area of window"))
+    (select-window (posn-window position))
+    (let ((pt (posn-point position)))
+      (if (numberp pt)
+          ;; is there a fake cursor with the actual *point* right where we are?
+          (unless (evil-mc-undo-cursor-at-pos pt)
+            (save-excursion
+              (goto-char pt)
+              (evil-mc-make-cursor-here)))))))
+(map! "C-<down-mouse-1>" nil)
+(map! "C-<mouse-1>" #'evil-mc/toggle-cursor-on-click)
+#+end_src
+
+*** Flyspell
+
+Vamos deixá-lo menos preguiçoso: @performance
+
+#+begin_src emacs-lisp
+(setq flyspell-lazy-idle-seconds 0.4)
+#+end_src
+
+Com o =flyspell-correct=, vamos adicionar alguns atalhos:
+
+#+begin_src emacs-lisp
+(map! :ni "C-." #'flyspell-correct-move)
+#+end_src
+
+*** Iedit
+
+Desativa uma mensagem chata quando apertamos =M-d=
+
+#+begin_src emacs-lisp
+(setq iedit-toggle-key-default nil)
+#+end_src
+
+*** @Lisps
+**** Parinfer
+
+ - =paren= Mode gives you full control of parens, while Parinfer corrects
+   indentation. You can still adjust indentation, but you won't be able to
+   indent/dedent past certain boundaries set by parens on previous lines.
+   
+ - =indent= Mode gives you full control of indentation, while Parinfer
+   corrects or inserts close-parens where appropriate. Specifically, it only
+   touches the groups of close-parens at the end of each line.
+   
+ - =smart= Mode is like Indent Mode, but it tries to preserve the structure too.
+
+#+begin_src emacs-lisp
+(setq parinfer-rust-preferred-mode "indent")
+#+end_src
+
+*** Mamimo
+
+#+begin_src emacs-lisp
+(setq mamimo-greek-abbrevs-prefix "'")
+(add-hook! 'mamimo-mode-hook
+  (evil-tex-mode +1))
+#+end_src
+
+*** Mixed-pitch
+
+#+begin_src emacs-lisp
+(defface my-mixed-pitch-face
+  '((t :family "Overpass" :weight semilight))
+  "Face for `mixed-pitch-mode'")
+(setq mixed-pitch-face 'my-mixed-pitch-face)
+#+end_src
+
+*** @Org
+**** Org-appear
+
+Faz os elementos de markup desaparecerem automaticamente.
+
+#+begin_src emacs-lisp :tangle packages.el
+(package! org-appear)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autolinks nil))
+#+end_src
+
+*** Vertico :completion:
+
+#+begin_src emacs-lisp :tangle tangle/minor/vertico.el
+(vertico-reverse-mode +1)
+(setq vertico-resize t
+      vertico-count 8)
+#+end_src
+
+** Carregar
+O trecho a seguir carrega os arquivos de configurações nos diretórios
+=lisp/major= e =lisp/minor=, e faz com que cada arquivo seja carregado apenas
+depois do módulo de mesmo nome ser carregado (com a função =after!=).
+#+begin_src emacs-lisp
+(dolist (type '(major minor features))
+  (let ((folder (format "~/.doom.d/lisp/%s/" type)))
+    (dolist (file (file-expand-wildcards (concat folder "*.el")))
+      (let ((f (file-name-sans-extension (file-name-nondirectory file))))
+        (eval `(after! ,(intern f) (load! ,f ,folder)))))))
+#+end_src
+
+#+begin_src emacs-lisp
+(dolist (type '(major minor features))
+  (let ((folder (format "%stangle/%s/" doom-private-dir type)))
+    (dolist (file (file-expand-wildcards (concat folder "*.el")))
+      (let ((f (file-name-sans-extension (file-name-nondirectory file))))
+        (eval `(after! ,(intern f) (load! ,f ,folder)))))))
+#+end_src
+
 * Atalhos de teclado
-** Deixando o Emacs mais familiar
+** TODO Implementar o atalho =C-l= no insert state
+** TODO Fazer o binding =SPC s I= abrir a sessão com narrowing
+
+
+** Comandos familiares
 
 Porque ninguém merece tantos atalhos diferentes.
 
@@ -294,12 +871,19 @@ Porque ninguém merece tantos atalhos diferentes.
 (map! :i "C-x" 'evil-delete)
 #+end_src
 
-** Evil ABNT
+** Workspaces
+#+begin_src emacs-lisp
+(map! :map 'doom-leader-workspace-map
+      "}" #'+workspace/swap-right
+      "{" #'+workspace/swap-left)
+#+end_src
+
+** Evil ABNT :ARCHIVE:
 
 Nossos teclados têm uma tecla a mais no melhor lugar possível, não podemos
 desperdiçar a oportunidade de usar =jklç=:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; no dia em que eu precisar usar teclado americano, eu vou me arrepender...
 
 (map! :map minibuffer-local-map
@@ -348,16 +932,22 @@ desperdiçar a oportunidade de usar =jklç=:
       "ç"      #'treemacs-RET-action)
 #+end_src
 
-** Hydras
-
+** TODO Hydras (mudar para hercules)
 Uma história antiga.
 
+Não gosto do estilo do pop up
+#+begin_src emacs-lisp
+(setq hydra-is-helpful nil)
+#+end_src
+
+Tamanho da janela
 #+begin_src emacs-lisp
 (defhydra window-height-hydra (evil-window-map)
   "window height"
   ("=" evil-window-increase-height "increase")
   ("-" evil-window-decrease-height "decrease"))
 #+end_src
+
 ** Kitty (Terminal)
 #+begin_src emacs-lisp
 (map! :prefix-map ("\x80" . "kitty C map")
@@ -378,6 +968,7 @@ Uma história antiga.
 
 (map! :i "C-M-x" ctl-x-map)
 #+end_src
+
 ** Centralizar ao procurar com o evil
 #+begin_src emacs-lisp
 ;; (evil-define-motion search-previous-and-recenter (count)
@@ -388,46 +979,14 @@ Uma história antiga.
 
 ;; (map! :n [remap evil-ex-search-previous] #'search-previous-and-recenter)
 #+end_src
+
 ** Outros
 
 #+begin_src emacs-lisp
 (map! "M-j" 'drag-stuff-down
       "M-k" 'drag-stuff-up)
 
-(map! :leader :desc "Centered mode" "t e" 'olivetti-mode)
-
 (map! :map lean-mode-map "M-." 'lean-find-definition)
 
 (map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
-#+end_src
-
-* Configurações de pacotes
-
-Primeiro, alguns pacotes configurados com o =use-package=:
-#+begin_src emacs-lisp
-(load! "lisp/use-packages")
-#+end_src
-
-Agora, algumas variáveis do =defcustom=:
-#+begin_src emacs-lisp
-(load! "lisp/defcustoms.el")
-#+end_src
-
-O trecho a seguir carrega os arquivos de configurações nos diretórios
-=lisp/major= e =lisp/minor=, e faz com que cada arquivo seja carregado apenas
-depois do módulo de mesmo nome ser carregado (com a função =after!=).
-#+begin_src emacs-lisp
-(dolist (type '(major minor))
-  (let ((folder (format "~/.doom.d/lisp/%s/" type)))
-    (dolist (file (file-expand-wildcards (concat folder "*.el")))
-      (let ((f (file-name-sans-extension (file-name-nondirectory file))))
-        (eval `(after! ,(intern f) (load! ,f ,folder)))))))
-#+end_src
-
-** Projectile
-#+begin_src emacs-lisp
-(after! projectile
-    (projectile-register-project-type 'julia '("Project.toml")
-                                    :project-file "Project.toml"
-                                    :test "julia -e \"using Pkg; Pkg.test()\""))
 #+end_src

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: minor-tangle
+# key: minor
+# condition: t
+# expand-env: ((yas-indent-line 'fixed))
+# --
+#+begin_src elisp :tangle tangle/minor/${1:name}.el
+;;; tangle/minor/$1.el -*- lexical-binding: t; -*-
+$0
+#+end_src

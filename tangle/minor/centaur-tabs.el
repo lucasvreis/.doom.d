@@ -1,5 +1,4 @@
-;;; lisp/minor/centaur.el -*- lexical-binding: t; -*-
-
+;;; tangle/minor/centaur-tabs.el -*- lexical-binding: t; -*-
 (defun centaur-tabs-buffer-groups ()
   "`centaur-tabs-buffer-groups' control buffers' group rules.
 

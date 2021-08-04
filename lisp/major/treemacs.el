@@ -41,6 +41,7 @@
 (add-to-list 'treemacs-pre-file-insert-predicates #'treemacs-is-file-git-ignored?)
 
 (add-hook! 'treemacs-mode-hook
+  (hide-mode-line-mode +1)
   (hack-dir-local-variables-non-file-buffer)
   (unless (equal treemacs-file-ignore-globs '())
     (treemacs-file-ignore-generate-regexps)))

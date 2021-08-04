@@ -1,5 +1,4 @@
-;;; lisp/minor/doom-modeline.el -*- lexical-binding: t; -*-
-
+;;; tangle/minor/doom-modeline.el -*- lexical-binding: t; -*-
 
 (doom-modeline-def-segment buffer-name
   "Display the current buffer's name, without any other information."

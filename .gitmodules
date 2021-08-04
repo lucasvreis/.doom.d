@@ -1,3 +1,6 @@
 [submodule "lisp/lib/mamimo"]
 	path = lisp/lib/mamimo
 	url = ./lisp/lib/mamimo/
+[submodule "evil-tex"]
+	path = lisp/lib/evil-tex
+	url = https://github.com/lucasvreis/evil-tex.git

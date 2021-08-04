@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: proof
+# uuid: org-proof
+# key: proof
+# condition: t
+# --
+${1:$(unless (string-empty-p yas-text) "#+attr_latex: :options [")}${1:Name}${1:$(unless (string-empty-p yas-text) "]\n")}#+begin_proof
+$2
+#+end_proof
+$0

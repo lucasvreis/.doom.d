@@ -5,8 +5,6 @@
 (add-hook! org-mode
     (auto-fill-mode +1)
     (setq-local real-auto-save-interval 0.2)
-    (turn-off-smartparens-mode)
-    (turn-on-show-smartparens-mode)
     (ws-butler-mode -1)
     (my/org-hide-properties)
     )

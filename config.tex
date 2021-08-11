@@ -1,26 +1,65 @@
-:PROPERTIES:
-:ID:       677d2cee-3665-43f4-a895-6fe08f11eb9a
-:END:
-#+title: Minha Configuração do Emacs
-#+property: header-args :mkdirp yes
+% Created 2021-08-04 qua 21:26
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\author{Lucas Reis}
+\date{\today}
+\title{Minha Configuração do Emacs}
+\hypersetup{
+ pdfauthor={Lucas Reis},
+ pdftitle={Minha Configuração do Emacs},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 28.0.50 (Org mode 9.5)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\tableofcontents
 
 Vamos usar o binding léxico:
-#+begin_src emacs-lisp
+\begin{verbatim}
 ;;; -*- lexical-binding: t; -*-
-#+end_src
+\end{verbatim}
 
-* Estético
-** Tema
-#+begin_src emacs-lisp
-(setq doom-theme 'doom-rouge)
-#+end_src
+\section{Doom}
+\label{sec:orge9ac282}
+\subsection{Zen}
+\label{sec:org76d1931}
+Ver também \href{lisp/minor/writeroom-mode.el}{writeroom-mode} e \href{lisp/minor/mixed-pitch.el}{mixed-pitch}.
+\begin{verbatim}
+(setq +zen-text-scale 0)
+\end{verbatim}
 
-*** Esconder temas
+\section{Estético}
+\label{sec:orge173df1}
+\subsection{Tema}
+\label{sec:orgdb6752c}
+\begin{verbatim}
+(setq doom-theme 'doom-tomorrow-day)
+\end{verbatim}
+
+\subsubsection{Esconder temas}
+\label{sec:org5cf09e5}
 
 Deixa a seleção menos distrativa, removendo os temas não-doom e os temas da
 lista abaixo.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (defvar my/custom-themes-exclude
   '(doom-acario-light
     doom-acario-dark
@@ -52,13 +91,14 @@ lista abaixo.
               (seq-difference
                (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
                my/custom-themes-exclude #'eq)))
-#+end_src
+\end{verbatim}
+\subsection{Faces}
+\label{sec:org9f19b59}
+\subsubsection{Fontes}
+\label{sec:orgedaa4e9}
 
-** Faces
-*** Fontes
-
-#+begin_src emacs-lisp :results none
-(setq doom-font                (font-spec :family "Iosevka" :size 22 :weight 'normal)
+\begin{verbatim}
+(setq doom-font                (font-spec :family "Iosevka" :size 19 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 19 :weight 'light)
       doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light))
       ;; doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
@@ -67,29 +107,32 @@ lista abaixo.
 (add-hook! 'after-setting-font-hook
   (set-fontset-font t 'unicode "JuliaMono")
   (set-fontset-font t 'unicode "Twemoji" nil 'append))
-#+end_src
+\end{verbatim}
 
-*** Código (prog)
-Deixamos os comentários itálicas, e os ~keywords~ oblíquos.
+\subsubsection{Código (prog)}
+\label{sec:orgbc4606a}
+Deixamos os comentários itálicas, e os \texttt{keywords} oblíquos.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant oblique))
-#+end_src
+\end{verbatim}
 
-*** @Yasnippet
-#+begin_src emacs-lisp
+\subsubsection{@Yasnippet}
+\label{sec:org64b28da}
+\begin{verbatim}
 (custom-set-faces!
   `(yas-field-highlight-face
     :inherit nil
     :background ,(doom-blend "#99f056" (doom-color 'bg) 0.1)))
-#+end_src
-*** @Org
-#+begin_src emacs-lisp :results none
+\end{verbatim}
+\subsubsection{@Org}
+\label{sec:org42d8e0d}
+\begin{verbatim}
 (custom-set-faces!
-  `(org-latex-and-related :weight normal)
-  '(font-latex-math-face :inherit org-latex-and-related :foreground "undefined")
+  `(org-latex-and-related :foreground ,(doom-color 'cyan) :weight normal)
+  '(font-latex-math-face :inherit org-latex-and-related)
   '(org-block-begin-line :extend t))
 (custom-theme-set-faces! 'doom-flatwhite
   `(org-latex-and-related :foreground nil :background ,(doom-color 'fw-green-blend)))
@@ -102,24 +145,20 @@ Deixamos os comentários itálicas, e os ~keywords~ oblíquos.
   '(outline-6 :weight semi-bold)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold))
-#+end_src
+\end{verbatim}
 
-*** Ícones
+\subsubsection{Ícones}
+\label{sec:orgc9026d2}
 Ajusta o tamanho dos ícones.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq all-the-icons-scale-factor 0.88)
-#+end_src
+\end{verbatim}
 
-*** Fixes
-O tema =doom-rouge= não tem um =hl-line= distinguível...
-#+begin_src emacs-lisp
-(custom-theme-set-faces! 'doom-rouge
-  '(hl-line :background "#171727"))
-#+end_src
-** Modeline
+\subsection{Modeline}
+\label{sec:org8438328}
 
-#+begin_src elisp :tangle tangle/minor/doom-modeline.el
+\begin{verbatim}
 ;;; tangle/minor/doom-modeline.el -*- lexical-binding: t; -*-
 
 (doom-modeline-def-segment buffer-name
@@ -159,61 +198,63 @@ O tema =doom-rouge= não tem um =hl-line= distinguível...
   '(bar window-number pdf-pages pdf-icon buffer-name)
   '(misc-info matches major-mode process vcs))
 
-#+end_src
+\end{verbatim}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (custom-set-faces!
   '(mode-line :height 110 :family "JuliaMono")
   '(mode-line-inactive :height 110 :family "JuliaMono")
   '(doom-modeline-buffer-modified :foreground "#c63")
   '(doom-modeline-info :foreground "white"))
 (setq! +modeline-height 26)
-#+end_src
+\end{verbatim}
 
-** Divisores de janelas
+\subsection{Divisores de janelas}
+\label{sec:org277942a}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq window-divider-default-bottom-width 2   ; default is 1
       window-divider-default-right-width  2)  ; default is 1
-#+end_src
+\end{verbatim}
 
-** Dashboard
-*** Estético
+\subsection{Dashboard}
+\label{sec:orgf42ac29}
+\subsubsection{Estético}
+\label{sec:orgbfe7fe6}
 
 Pequenas modificações ao dashboard:
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 ;; Desabilita o "benchmark"
 (remove-hook 'window-setup-hook #'doom-display-benchmark-h)
-#+end_src
+\end{verbatim}
 
-*** Banner
+\subsubsection{Banner}
+\label{sec:org8a4c71c}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq +doom-dashboard-functions '(doom-dashboard-widget-shortmenu
                                   doom-dashboard-widget-loaded))
-#+end_src
+\end{verbatim}
 
 A fonte padrão é itálica e deixa os acrobatas tortos, vamos resolver isso:
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (custom-set-faces!
   '(doom-dashboard-banner
     :inherit font-lock-comment-face
     :slant normal))
-#+end_src
+\end{verbatim}
 
-** Meu =zen-mode=
+\subsection{Meu \texttt{zen-mode}}
+\label{sec:org80f4d57}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (defvar my/zen-enabled nil)
 
 (defun my/zen-enable ()
   (interactive)
-  (require 'org-starless)
   (hide-mode-line-mode +1)
-  (org-starless-mode +1)
-  (org-indent-mode -1)
   (setq-local my/zen-enabled t
               line-spacing 0.1
               display-line-numbers nil))
@@ -221,8 +262,6 @@ A fonte padrão é itálica e deixa os acrobatas tortos, vamos resolver isso:
 (defun my/zen-disable ()
   (interactive)
   (hide-mode-line-mode -1)
-  (org-starless-mode +1)
-  (org-indent-mode +1)
   (setq-local my/zen-enabled nil
               line-spacing 0
               display-line-numbers t))
@@ -234,55 +273,65 @@ A fonte padrão é itálica e deixa os acrobatas tortos, vamos resolver isso:
     (my/zen-enable)))
 
 (map! :leader "t z" #'my/zen-toggle)
-#+end_src
+\end{verbatim}
 
-* Minha biblioteca
-** Pasta-bibioteca
+\section{Minha biblioteca}
+\label{sec:orgdf5fc86}
+\subsection{Pasta-bibioteca}
+\label{sec:org96002e9}
 
 Com algumas bibliotecas externas, por exemplo.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (let ((default-directory "~/.doom.d/lisp/lib"))
   (normal-top-level-add-subdirs-to-load-path))
 (add-load-path! "lisp/lib")
-#+end_src
+\end{verbatim}
 
-** Funções (não interativas)
-*** Conselhos
-
+\subsection{Funções (não interativas)}
+\label{sec:orgae01f86}
+\subsubsection{Conselhos}
+\label{sec:orgb1a8bfa}
 Para desabilitar as mensagens chatas:
-
-#+begin_src emacs-lisp
+\begin{verbatim}
 (defun advice--inhibit-message (f &rest r) (let ((inhibit-message t)) (apply f r)))
-#+end_src
+\end{verbatim}
 
-*** Checa se objeto é uma lista de strings
-#+begin_src emacs-lisp
+\subsubsection{Checa se objeto é uma lista de strings}
+\label{sec:orga2e5768}
+\begin{verbatim}
 (defun string-list-p (x) (and (listp x) (--all? (stringp it) x)))
-#+end_src
+\end{verbatim}
 
-** Funções (interativas)
-*** Excluir todos os conselhos
-#+begin_src emacs-lisp
+\subsection{Funções (interativas)}
+\label{sec:org6418272}
+\subsubsection{Excluir todos os conselhos}
+\label{sec:orgd53a425}
+\begin{verbatim}
 (defun advice-unadvice (sym)
   "Remove all advices from symbol SYM."
   (interactive "aFunction symbol: ")
   (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-#+end_src
+\end{verbatim}
 
-* Emacs em geral
-** Scroll
-#+begin_src emacs-lisp
+\section{Emacs em geral}
+\label{sec:org9572b80}
+\subsection{Scroll}
+\label{sec:org4892092}
+\begin{verbatim}
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
       mouse-wheel-progressive-speed nil ;; don't accelerate scrolling
-      scroll-margin 4
+      confirm-kill-emacs nil
       scroll-step 1) ;; keyboard scroll one line at a time
-#+end_src
+\end{verbatim}
 
-** Edição de texto
-*** Atalhos
-*** Variáveis
-#+begin_src emacs-lisp
+\subsection{Edição de texto}
+\label{sec:org3cc2396}
+\subsubsection{Atalhos}
+\label{sec:org36a08b4}
+\subsubsection{Variáveis}
+\label{sec:orgeaff0ac}
+\begin{verbatim}
 (setq-default fill-column 80)
 
 (setq company-idle-delay 0.01
@@ -293,52 +342,55 @@ Para desabilitar as mensagens chatas:
       mouse-drag-and-drop-region-show-tooltip nil)
 
 (setq default-input-method "TeX")
-#+end_src
+\end{verbatim}
 
-Deixa o =text-scale-mode= mais devagar.
+Deixa o \texttt{text-scale-mode} mais devagar.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq text-scale-mode-step 1.05)
-#+end_src
-*** Salvando
+\end{verbatim}
+\subsubsection{Salvando}
+\label{sec:org403bc5c}
 Desabilita a mensagem de salvamento.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (advice-add 'save-buffer :around #'advice--inhibit-message)
-#+end_src
+\end{verbatim}
 
-*** Piscar o cursor :ARCHIVE:
-#+begin_src emacs-lisp
-(blink-cursor-mode +1)
-#+end_src
-*** Abbrev
+\subsubsection{Piscar o cursor\hfill{}\textsc{ARCHIVE}}
+\label{sec:org371e6dc}
+\subsubsection{Abbrev}
+\label{sec:orgb99a92e}
 Meu deus, como eu passei tanto tempo (4 meses) sem saber da existência
 desta coisa MARAVILHOSA??? É INCRÍVEL!!!!
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (add-hook! 'text-mode-hook
            (abbrev-mode +1))
 
 (setq abbrev-file-name (concat doom-private-dir "abbrev_defs"))
-#+end_src
+\end{verbatim}
 
-** Pesquisa & regex
-#+begin_src emacs-lisp
+\subsection{Pesquisa \& regex}
+\label{sec:orgb6e2528}
+\begin{verbatim}
 (pcre-mode +1)
-#+end_src
+\end{verbatim}
 
-** Menu de contexto
+\subsection{Menu de contexto}
+\label{sec:org8172c01}
 
 Retirado de:
-[[https://somecallmespace.com/emacs-context-menu.html][some call me Space | Emacs Context Menu]]
+\href{https://somecallmespace.com/emacs-context-menu.html}{some call me Space | Emacs Context Menu}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (require 'context-menu)
 (map! [mouse-3] 'my-context-menu)
-#+end_src
+\end{verbatim}
 
-** Popups
-#+begin_src emacs-lisp
+\subsection{Popups}
+\label{sec:org9f4e53b}
+\begin{verbatim}
 (setq +popup-defauts
       '(:side bottom
         :height 0.3
@@ -351,32 +403,36 @@ Retirado de:
       '((window-height . 0.3)
         (reusable-frames . visible)))
 
-#+end_src
+\end{verbatim}
 
-** Outros :completion:
+\subsection{Outros\hfill{}\textsc{completion}}
+\label{sec:org07835dd}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (remove-hook! '(org-mode-hook text-mode-hook) #'flyspell-mode)
 
 (setq vterm-shell "zsh"
       delete-by-moving-to-trash t
       mouse-autoselect-window nil)
-#+end_src
+\end{verbatim}
 
-** Maximizar a janela?
+\subsection{Maximizar a janela?}
+\label{sec:org548ce9e}
 
 Maximizar a janela ao iniciar?
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
-#+end_src
+\end{verbatim}
 
-* Configurações de pacotes
-** TODO Use-packages (temporário)
+\section{Configurações de pacotes}
+\label{sec:orgaf2d49b}
+\subsection{{\bfseries\sffamily TODO} Use-packages (temporário)}
+\label{sec:orgfc51f71}
 
-Primeiro, alguns pacotes configurados com o =use-package=:
+Primeiro, alguns pacotes configurados com o \texttt{use-package}:
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (use-package prettify-utils
   :after (org latex))
 
@@ -401,12 +457,13 @@ Primeiro, alguns pacotes configurados com o =use-package=:
 
 (use-package mamimo
   :hook ((org-mode latex-mode markdown-mode) . mamimo-mode))
-#+end_src
+\end{verbatim}
 
-** TODO Packages.el (temporário)
+\subsection{{\bfseries\sffamily TODO} Packages.el (temporário)}
+\label{sec:org917055a}
 
-Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el=.
-#+begin_src emacs-lisp :tangle packages.el
+Isso é temporário, enquanto eu não organizo o meu antigo arquivo \texttt{packages.el}.
+\begin{verbatim}
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
@@ -429,7 +486,7 @@ Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el
 
 (unpin! lsp-mode)
 (unpin! company-box)
-;; (unpin! consult)
+(unpin! consult)
 (unpin! doom-themes)
 (unpin! vertico)
 (unpin! treemacs)
@@ -440,12 +497,16 @@ Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el
 (package! math-symbol-lists)
 (package! company-math)
 (package! real-auto-save)
-#+end_src
+\end{verbatim}
 
-** Major modes
-*** Org
-**** Variáveis
-#+begin_src emacs-lisp
+\subsection{Major modes}
+\label{sec:org4316566}
+\subsubsection{Org}
+\label{sec:org9dbdc7d}
+\begin{enumerate}
+\item Variáveis
+\label{sec:org94a49b4}
+\begin{verbatim}
 (setq org-directory "~/Lucas/org"
       org-latex-packages-alist '(("" "tikz" t) ("" "tikz-cd" t))
       org-support-shift-select t
@@ -453,24 +514,31 @@ Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el
       org-src-window-setup 'plain
       org-highlight-latex-and-related '(native script)
       org-indent-indentation-per-level 1)
-#+end_src
+\end{verbatim}
 
-**** Gutter
+\item Gutter
+\label{sec:orgdbbfd77}
 
-O =git-gutter= não funciona bem com o =org-indent-mode=:
+O \texttt{git-gutter} não funciona bem com o \texttt{org-indent-mode}:
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (push 'org-mode git-gutter:disabled-modes)
-#+end_src
+\end{verbatim}
 
-**** Configuração
-#+begin_src elisp :tangle tangle/major/org.el :noweb yes
+\item Configuração
+\label{sec:orgabf43ea}
+\begin{verbatim}
 ;;; tangle/major/org.el -*- lexical-binding: t; -*-
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 
 (add-hook! org-mode
-    <<org-mode-hook>>
+    (auto-fill-mode +1)
+    (setq-local real-auto-save-interval 0.2)
+    (turn-off-smartparens-mode)
+    (turn-on-show-smartparens-mode)
+    (ws-butler-mode -1)
+    (my/org-hide-properties)
     )
 
 (set-popup-rule! "\*Org Src .+\*"
@@ -498,21 +566,25 @@ O =git-gutter= não funciona bem com o =org-indent-mode=:
                 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 
 (map! :mode 'org-mode :g "C-S-s" #'org-latex-export-to-pdf)
-#+end_src
+\end{verbatim}
 
-**** Hook
+\item Hook
+\label{sec:orgc17c6dd}
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hook
+\begin{verbatim}
 (auto-fill-mode +1)
 (setq-local real-auto-save-interval 0.2)
+(turn-off-smartparens-mode)
+(turn-on-show-smartparens-mode)
 (ws-butler-mode -1)
-#+end_src
+\end{verbatim}
 
-**** Esconder =:properties:=
+\item Esconder \texttt{:properties:}
+\label{sec:org25d5918}
 
 Roubado do manual do Roam v2 (ou algo assim).
 
-#+begin_src elisp :tangle tangle/major/org.el
+\begin{verbatim}
 (defun my/org-hide-properties ()
   "Hide all org-mode headline property drawers in buffer. Could be
 slow if it has a lot of overlays."
@@ -538,80 +610,24 @@ slow if it has a lot of overlays."
   (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
       (org-show-properties)
     (org-hide-properties)))
-#+end_src
+\end{verbatim}
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hook
+\begin{verbatim}
 (my/org-hide-properties)
-#+end_src
+\end{verbatim}
+\end{enumerate}
 
-** Features
-*** TODO Hercules
+\subsection{Features}
+\label{sec:orgfd9efe5}
+\subsubsection{@Org}
+\label{sec:org7d93536}
+\begin{enumerate}
+\item Org-roam
+\label{sec:org749418b}
 
-O Hercules é um "Hydra automático": ele deixa alguns keymaps persistentes, até
-que uma tecla fora do keymap seja pressionada.
-
-#+begin_src elisp :tangle packages.el
-(package! hercules)
-#+end_src
-
-#+begin_src emacs-lisp
-(hercules-def
- :show-funs '(+workspace/swap-right +workspace/swap-left)
- :keymap 'doom-leader-workspace-map
- :whitelist-keys '("{" "}")
- :transient t)
-#+end_src
-
-Exemplos:
-#+begin_src emacs-lisp :tangle no
-(hercules-def
- :toggle-funs #'macrostep-mode
- :keymap 'macrostep-keymap)
- 
-(define-key <map-symbol> (kbd "<key>") #'macrostep-mode)
-
-(hercules-def
- ;; read further to see why this works
- :toggle-funs #'org-babel-mode
- :keymap 'org-babel-map
- :transient t)
- 
-;; tweak binding to taste
-(define-key org-mode-map (kbd "C-c C-v") #'org-babel-mode)
-#+end_src
-*** Ispell
-
-#+begin_src emacs-lisp
-(setq ispell-dictionary "pt_BR,en_US"
-      ispell-personal-dictionary (concat doom-private-dir ".hunspell-personal"))
-
-(unless (file-exists-p ispell-personal-dictionary)
-  (write-region "" nil ispell-personal-dictionary nil 0))
-#+end_src
-
-Cria um dicionário multilinguagem com português e inglês.
-
-#+begin_src elisp
-(after! ispell
-  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
-  (ispell-set-spellchecker-params))
-#+end_src
-*** Orderless
-Também quero que tenha inicialismos (por exemplo, hmlm -> hide-mode-line-mode):
-#+begin_src emacs-lisp
-(setq orderless-matching-styles
-      '(orderless-initialism
-        orderless-literal
-        orderless-regexp))
-#+end_src
-*** @Org
-**** Org-roam
-#+begin_src emacs-lisp
-(setq org-roam-directory "~/Lucas/notas")
-#+end_src
-
-#+begin_src elisp :tangle tangle/feature/org-roam.el
+\begin{verbatim}
 ;;; tangle/feature/org-roam.el -*- lexical-binding: t; -*-
+(setq org-roam-directory "~/Lucas/notas")
 
 (defadvice! +org-roam-reuse-windows (&rest r)
   :before #'org-roam-preview-visit
@@ -630,46 +646,82 @@ Também quero que tenha inicialismos (por exemplo, hmlm -> hide-mode-line-mode):
        "🢔(\\1-\\2-\\3) "
        (subst-char-in-string ?_ ?  buffer-file-name))
     (funcall orig-fun)))
-#+end_src
+\end{verbatim}
 
-**** TODO Org-ql
-#+begin_src emacs-lisp :tangle packages.el
+\item {\bfseries\sffamily TODO} Org-ql
+\label{sec:org362604f}
+\begin{verbatim}
 (package! org-ql)
-#+end_src
+\end{verbatim}
 
-**** Org-sidebar :ARCHIVE:
-#+begin_src emacs-lisp :tangle packages.el
-(package! org-sidebar)
-#+end_src
+\item Org-sidebar\hfill{}\textsc{ARCHIVE}
+\label{sec:org2cdedca}
+\end{enumerate}
 
-#+begin_src emacs-lisp
-(after! org-sidebar
-  (defun :org-sidebar-refresh ()
-    (interactive)
-    (let* ((source-buffer (current-buffer))
-           (sidebar-window (--first (window-parameter it 'org-sidebar-window)
-                                    (window-at-side-list nil org-sidebar-side))))
-      (when sidebar-window
-        (with-current-buffer (window-buffer sidebar-window)
-          (when (eq org-sidebar-source-buffer source-buffer)
-            (org-sidebar-refresh)))))))
-#+end_src
-.
+\subsubsection{Ispell}
+\label{sec:orgaaad1bf}
 
-*** @Projectile
-#+begin_src emacs-lisp
+\begin{verbatim}
+(setq ispell-dictionary "pt_BR,en_US"
+      ispell-personal-dictionary (concat doom-private-dir ".hunspell-personal"))
+
+(unless (file-exists-p ispell-personal-dictionary)
+  (write-region "" nil ispell-personal-dictionary nil 0))
+\end{verbatim}
+
+Cria um dicionário multilinguagem com português e inglês.
+
+\begin{verbatim}
+(after! ispell
+  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
+  (ispell-set-spellchecker-params))
+\end{verbatim}
+
+\subsubsection{@Projectile}
+\label{sec:org88d39a6}
+\begin{verbatim}
 (after! projectile
     (projectile-register-project-type 'julia '("Project.toml")
                                     :project-file "Project.toml"
                                     :test "julia -e \"using Pkg; Pkg.test()\""))
-#+end_src
+\end{verbatim}
 
-*** Treemacs
-**** Ignorar (esconder) algumas coisas
+\subsubsection{{\bfseries\sffamily TODO} Hercules}
+\label{sec:org51a57c0}
+
+O Hercules é um ``Hydra automático'': ele deixa alguns keymaps persistentes, até
+que uma tecla fora do keymap seja pressionada.
+
+\begin{verbatim}
+(package! hercules)
+\end{verbatim}
+
+Exemplos:
+\begin{verbatim}
+(hercules-def
+ :toggle-funs #'macrostep-mode
+ :keymap 'macrostep-keymap)
+ 
+(define-key <map-symbol> (kbd "<key>") #'macrostep-mode)
+
+(hercules-def
+ ;; read further to see why this works
+ :toggle-funs #'org-babel-mode
+ :keymap 'org-babel-map
+ :transient t)
+ 
+;; tweak binding to taste
+(define-key org-mode-map (kbd "C-c C-v") #'org-babel-mode)
+\end{verbatim}
+\subsubsection{Treemacs}
+\label{sec:orgcd5b88a}
+\begin{enumerate}
+\item Ignorar (esconder) algumas coisas
+\label{sec:orge446025}
 
 Roubado do tecosaur.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (defcustom treemacs-file-ignore-extensions
   '("aux" "ptc" "fdb_latexmk" "fls" "synctex.gz" "toc"         ;; LaTeX
     "glg"  "glo"  "gls"  "glsdefs"  "ist"  "acn"  "acr"  "alg" ;; LaTeX - glossary
@@ -684,87 +736,39 @@ Roubado do tecosaur.
   "Globs which will are transformed to `treemacs-file-ignore-regexps'
 which `treemacs-ignore-filter' will ensure are ignored"
   :safe #'string-list-p)
-#+end_src
-
-**** Fringe only appears with width > 5
-#+begin_src emacs-lisp
+\end{verbatim}
+\item Fringe only appears with width > 5
+\label{sec:org4f3ff4b}
+\begin{verbatim}
 (setq doom-themes-treemacs-bitmap-indicator-width 8)
-#+end_src
+\end{verbatim}
+\end{enumerate}
 
-** Minor modes
-*** Centaur-tabs :ARCHIVE:
+\subsection{Minor modes}
+\label{sec:org276591d}
+\subsubsection{Centaur-tabs\hfill{}\textsc{ARCHIVE}}
+\label{sec:org12c1489}
 
-#+begin_src elisp :tangle tangle/minor/centaur-tabs.el
-;;; tangle/minor/centaur-tabs.el -*- lexical-binding: t; -*-
-(defun centaur-tabs-buffer-groups ()
-  "`centaur-tabs-buffer-groups' control buffers' group rules.
+\subsubsection{Elcord}
+\label{sec:orgdaa57f9}
 
-    Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
-    All buffer name start with * will group to \"Emacs\".
-    Other buffer group by `centaur-tabs-get-group-name' with project name."
-  (list
-   (cond
-    ((derived-mode-p 'prog-mode)
-     "Editing")
-    ((derived-mode-p 'dired-mode)
-     "Dired")
-    ((memq major-mode '(helpful-mode
-                        help-mode))
-     "Help")
-    ((memq major-mode '(org-mode
-                        org-agenda-clockreport-mode
-                        org-src-mode
-                        org-agenda-mode
-                        org-beamer-mode
-                        org-indent-mode
-                        org-bullets-mode
-                        org-cdlatex-mode
-                        org-agenda-log-mode
-                        diary-mode))
-     "OrgMode")
-    ((memq major-mode '(vterm-mode
-                        term-mode
-                        julia-repl-mode))
-     "TermMode")
-    ((or (string-equal "*" (substring (buffer-name) 0 1))
-         (memq major-mode '(magit-process-mode
-                            magit-status-mode
-                            magit-diff-mode
-                            magit-log-mode
-                            magit-file-mode
-                            magit-blob-mode
-                            magit-blame-mode)))
-     "Emacs")
-    (t
-     (centaur-tabs-get-group-name (current-buffer))))))
-
-
-(setq centaur-tabs-style "bar"
-      centaur-tabs-set-bar nil
-      centaur-tabs-height 36
-      centaur-tabs-plain-icons t
-      centaur-tabs-label-fixed-length 10)
-
-(after! centaur-tabs
-  (centaur-tabs-group-by-projectile-project))
-#+end_src
- 
-*** Elcord
-
-#+begin_src elisp :tangle packages.el
+\begin{verbatim}
 (package! elcord)
-#+end_src
+\end{verbatim}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq elcord-editor-icon "emacs_icon"
       elcord-display-elapsed nil
       elcord--editor-name "Emacs"
       elcord-use-major-mode-as-main-icon t)
-#+end_src
+\end{verbatim}
 
-*** @Evil
-**** Variáveis
-#+begin_src emacs-lisp
+\subsubsection{@Evil}
+\label{sec:orgcd1996c}
+\begin{enumerate}
+\item Variáveis
+\label{sec:orgcbb7603}
+\begin{verbatim}
 (setq evil-shift-round nil
       evil-cross-lines t
 
@@ -773,23 +777,25 @@ which `treemacs-ignore-filter' will ensure are ignored"
 
       ;; Substitui vários matches por linha no evil-ex
       evil-ex-substitute-global t)
-#+end_src
+\end{verbatim}
 
-**** Shift
-Eu /realmente/ quero que o shift tenha 2 espaços na linguagem elisp.
-#+begin_src elisp :tangle tangle/minor/evil.el
+\item Shift
+\label{sec:org94e564b}
+Eu \emph{realmente} quero que o shift tenha 2 espaços na linguagem elisp.
+\begin{verbatim}
 ;;; tangle/minor/evil.el -*- lexical-binding: t; -*-
 (defadvice! ~evil-shift-width-elisp-advice (fun &rest r)
   :around #'evil-shift-width-elisp-advice
   (if (eq major-mode 'emacs-lisp-mode)
       (setq evil-shift-width 2)
     (apply fun r)))
-#+end_src
+\end{verbatim}
 
-**** Evil-mc
+\item Evil-mc
+\label{sec:orgde0588d}
 
 Multicursores com o Ctrl + clique esquerdo do mouse (como no VSCode).
-#+begin_src elisp :tangle tangle/minor/evil.el
+\begin{verbatim}
 (defun evil-mc/toggle-cursor-on-click (event)
   "Add a cursor where you click, or remove a fake cursor that is
 already there."
@@ -811,121 +817,140 @@ already there."
               (evil-mc-make-cursor-here)))))))
 (map! "C-<down-mouse-1>" nil)
 (map! "C-<mouse-1>" #'evil-mc/toggle-cursor-on-click)
-#+end_src
+\end{verbatim}
+\end{enumerate}
 
-*** Flyspell
+\subsubsection{Flyspell}
+\label{sec:org7c4e731}
 
 Vamos deixá-lo menos preguiçoso: @performance
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq flyspell-lazy-idle-seconds 0.4)
-#+end_src
+\end{verbatim}
 
-Com o =flyspell-correct=, vamos adicionar alguns atalhos:
+Com o \texttt{flyspell-correct}, vamos adicionar alguns atalhos:
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (map! :ni "C-." #'flyspell-correct-move)
-#+end_src
+\end{verbatim}
 
-*** Iedit
+\subsubsection{Iedit}
+\label{sec:orgf09ad0e}
 
-Desativa uma mensagem chata quando apertamos =M-d=
+Desativa uma mensagem chata quando apertamos \texttt{M-d}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq iedit-toggle-key-default nil)
-#+end_src
+\end{verbatim}
 
-*** @Lisps
-**** Parinfer
+\subsubsection{@Lisps}
+\label{sec:orgccb0e39}
+\begin{enumerate}
+\item Parinfer
+\label{sec:orga914064}
 
- - =paren= Mode gives you full control of parens, while Parinfer corrects
-   indentation. You can still adjust indentation, but you won't be able to
-   indent/dedent past certain boundaries set by parens on previous lines.
-   
- - =indent= Mode gives you full control of indentation, while Parinfer
-   corrects or inserts close-parens where appropriate. Specifically, it only
-   touches the groups of close-parens at the end of each line.
+\begin{itemize}
+\item \texttt{paren} Mode gives you full control of parens, while Parinfer corrects
+indentation. You can still adjust indentation, but you won't be able to
+indent/dedent past certain boundaries set by parens on previous lines.
 
- - =smart= Mode is like Indent Mode, but it tries to preserve the structure too.
-   
-NOTE TO SELF: =smart= and =indent= won't allow inserting unmached }
+\item \texttt{indent} Mode gives you full control of indentation, while Parinfer
+corrects or inserts close-parens where appropriate. Specifically, it only
+touches the groups of close-parens at the end of each line.
 
-#+begin_src emacs-lisp
+\item \texttt{smart} Mode is like Indent Mode, but it tries to preserve the structure too.
+\end{itemize}
+
+\begin{verbatim}
 (setq parinfer-rust-preferred-mode "indent")
-#+end_src
+\end{verbatim}
+\end{enumerate}
 
-*** Mamimo
+\subsubsection{Mamimo}
+\label{sec:org4902dab}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq mamimo-greek-abbrevs-prefix "'")
 (add-hook! 'mamimo-mode-hook
   (evil-tex-mode +1))
-#+end_src
+\end{verbatim}
 
-*** Mixed-pitch
+\subsubsection{Mixed-pitch}
+\label{sec:orgb5b9b2e}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (defface my-mixed-pitch-face
   '((t :family "Overpass" :weight light))
   "Face for `mixed-pitch-mode'")
 (setq mixed-pitch-face 'my-mixed-pitch-face
       mixed-pitch-set-height nil)
-#+end_src
+\end{verbatim}
 
-*** @Org
-**** Org-appear
+\subsubsection{@Org}
+\label{sec:orge433c41}
+\begin{enumerate}
+\item Org-appear
+\label{sec:org2109952}
 
 Faz os elementos de markup desaparecerem automaticamente.
 
-#+begin_src emacs-lisp :tangle packages.el
+\begin{verbatim}
 (package! org-appear)
-#+end_src
+\end{verbatim}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (use-package org-appear
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-appear-autolinks nil))
-#+end_src
+\end{verbatim}
+\end{enumerate}
 
-*** Vertico :completion:
+\subsubsection{Vertico\hfill{}\textsc{completion}}
+\label{sec:orgaf65f9f}
 
-#+begin_src emacs-lisp :tangle tangle/minor/vertico.el
+\begin{verbatim}
 (vertico-reverse-mode +1)
 (setq vertico-resize t
-      vertico-count 10)
-#+end_src
+      vertico-count 8)
+\end{verbatim}
 
-** Carregar
+\subsection{Carregar}
+\label{sec:org3e6c555}
 O trecho a seguir carrega os arquivos de configurações nos diretórios
-=lisp/major= e =lisp/minor=, e faz com que cada arquivo seja carregado apenas
-depois do módulo de mesmo nome ser carregado (com a função =after!=).
-#+begin_src emacs-lisp
+\texttt{lisp/major} e \texttt{lisp/minor}, e faz com que cada arquivo seja carregado apenas
+depois do módulo de mesmo nome ser carregado (com a função \texttt{after!}).
+\begin{verbatim}
 (dolist (type '(major minor features))
   (let ((folder (format "~/.doom.d/lisp/%s/" type)))
     (dolist (file (file-expand-wildcards (concat folder "*.el")))
       (let ((f (file-name-sans-extension (file-name-nondirectory file))))
         (eval `(after! ,(intern f) (load! ,f ,folder)))))))
-#+end_src
+\end{verbatim}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (dolist (type '(major minor features))
   (let ((folder (format "%stangle/%s/" doom-private-dir type)))
     (dolist (file (file-expand-wildcards (concat folder "*.el")))
       (let ((f (file-name-sans-extension (file-name-nondirectory file))))
         (eval `(after! ,(intern f) (load! ,f ,folder)))))))
-#+end_src
+\end{verbatim}
 
-* Atalhos de teclado
-** TODO Implementar o atalho =C-l= no insert state
-** TODO Fazer o binding =SPC s I= abrir a sessão com narrowing
+\section{Atalhos de teclado}
+\label{sec:orga0eb357}
+\subsection{{\bfseries\sffamily TODO} Implementar o atalho \texttt{C-l} no insert state}
+\label{sec:orgff3161d}
+\subsection{{\bfseries\sffamily TODO} Fazer o binding \texttt{SPC s I} abrir a sessão com narrowing}
+\label{sec:org5db83d0}
 
 
-** Comandos familiares
+\subsection{Comandos familiares}
+\label{sec:orgf0ce997}
 
 Porque ninguém merece tantos atalhos diferentes.
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (map! "C-S-s" 'isearch-forward)
 (map! :egni "C-s" 'save-buffer)
 (map! :egni "C-/" 'evilnc-comment-or-uncomment-lines)
@@ -934,94 +959,39 @@ Porque ninguém merece tantos atalhos diferentes.
 (map! :i "C-z" 'evil-undo)
 (map! :i "C-S-z" 'evil-redo)
 (map! :i "C-x" 'evil-delete)
-#+end_src
+\end{verbatim}
 
-** Linhas visuais
-#+begin_src emacs-lisp
-(map! :map evil-motion-state-map
-      "j" 'evil-next-visual-line
-      "k" 'evil-previous-visual-line)
-#+end_src
-
-** Workspaces
-#+begin_src emacs-lisp
+\subsection{Workspaces}
+\label{sec:org7516ae1}
+\begin{verbatim}
 (map! :map 'doom-leader-workspace-map
       "}" #'+workspace/swap-right
       "{" #'+workspace/swap-left)
-#+end_src
+\end{verbatim}
 
-** Evil ABNT :ARCHIVE:
+\subsection{Evil ABNT\hfill{}\textsc{ARCHIVE}}
+\label{sec:org7ab3ce3}
 
-Nossos teclados têm uma tecla a mais no melhor lugar possível, não podemos
-desperdiçar a oportunidade de usar =jklç=:
-
-#+begin_src emacs-lisp :tangle no
-;; no dia em que eu precisar usar teclado americano, eu vou me arrepender...
-
-(map! :map minibuffer-local-map
-      "C-k" #'next-line
-      "C-l" #'previous-line
-      :i "C-k" #'next-line
-      :i "C-l" #'previous-line)
-
-(map! :map evil-motion-state-map
-      "j" 'evil-backward-char
-      "k" 'evil-next-visual-line
-      "l" 'evil-previous-visual-line
-      "ç" 'evil-forward-char)
-
-(map! :map evil-window-map
-      ;; Navigation
-      "j"       #'evil-window-left
-      "k"       #'evil-window-down
-      "l"       #'evil-window-up
-      "ç"       #'evil-window-right
-      "C-j"     #'evil-window-left
-      "C-k"     #'evil-window-down
-      "C-l"     #'evil-window-up
-      "C-ç"     #'evil-window-right
-      ;; Swapping windows
-      "J"       #'+evil/window-move-left
-      "K"       #'+evil/window-move-down
-      "L"       #'+evil/window-move-up
-      "Ç"       #'+evil/window-move-right)
-
-(map! :i "M-J" 'evil-backward-char
-      :i "M-K" 'evil-next-line
-      :i "M-L" 'evil-previous-line
-      :i "M-Ç" 'evil-forward-char)
-
-(after! treemacs (evil-define-key 'treemacs treemacs-mode-map "l" nil "h" nil))
-
-;; (evil-define-key '(visual normal) Info-mode-map "l" nil)
-(map! :map Info-mode-map :vn "l" nil)
-
-(map! :after treemacs
-      :map evil-treemacs-state-map
-      "j"      #'treemacs-COLLAPSE-action
-      "k"      #'treemacs-next-line
-      "l"      #'treemacs-previous-line
-      "ç"      #'treemacs-RET-action)
-#+end_src
-
-** TODO Hydras (mudar para hercules)
+\subsection{{\bfseries\sffamily TODO} Hydras (mudar para hercules)}
+\label{sec:org66ae87d}
 Uma história antiga.
 
 Não gosto do estilo do pop up
-#+begin_src emacs-lisp
+\begin{verbatim}
 (setq hydra-is-helpful nil)
-#+end_src
+\end{verbatim}
 
 Tamanho da janela
-#+begin_src emacs-lisp
+\begin{verbatim}
 (defhydra window-height-hydra (evil-window-map)
   "window height"
   ("=" evil-window-increase-height "increase")
   ("-" evil-window-decrease-height "decrease"))
-#+end_src
+\end{verbatim}
 
-** Kitty (Terminal)
-#+begin_src emacs-lisp
+\subsection{Kitty (Terminal)}
+\label{sec:orga8af5e9}
+\begin{verbatim}
 (map! :prefix-map ("\x80" . "kitty C map")
       :map 'key-translation-map
       "/" "C-/")
@@ -1029,20 +999,22 @@ Tamanho da janela
 (map! :prefix-map ("\x81" . "kitty C-S map")
       :map 'key-translation-map
       "z" (kbd "C-S-z"))
-#+end_src
+\end{verbatim}
 
-** Edit leader key
-#+begin_src emacs-lisp
+\subsection{Edit leader key}
+\label{sec:org101fd72}
+\begin{verbatim}
 (map! :leader
       :prefix ("e" . "edit")
       :desc "New snipet" "s" #'+snippets/new
       :desc "New alias" "a" #'+snippets/new-alias)
 
 (map! :i "C-M-x" ctl-x-map)
-#+end_src
+\end{verbatim}
 
-** Centralizar ao procurar com o evil
-#+begin_src emacs-lisp
+\subsection{Centralizar ao procurar com o evil}
+\label{sec:org7e7e23a}
+\begin{verbatim}
 ;; (evil-define-motion search-previous-and-recenter (count)
 ;;   :jump t
 ;;   :type exclusive
@@ -1050,15 +1022,17 @@ Tamanho da janela
 ;;   (call-interactively #'evil-scroll-line-to-center))
 
 ;; (map! :n [remap evil-ex-search-previous] #'search-previous-and-recenter)
-#+end_src
+\end{verbatim}
 
-** Outros
+\subsection{Outros}
+\label{sec:orgd66ba59}
 
-#+begin_src emacs-lisp
+\begin{verbatim}
 (map! "M-j" 'drag-stuff-down
       "M-k" 'drag-stuff-up)
 
 (map! :map lean-mode-map "M-." 'lean-find-definition)
 
 (map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
-#+end_src
+\end{verbatim}
+\end{document}

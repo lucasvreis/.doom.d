@@ -4,3 +4,6 @@
 [submodule "evil-tex"]
 	path = lisp/lib/evil-tex
 	url = https://github.com/lucasvreis/evil-tex.git
+[submodule "lisp/lib/org-starless"]
+	path = lisp/lib/org-starless
+	url = https://github.com/TonCherAmi/org-starless.git

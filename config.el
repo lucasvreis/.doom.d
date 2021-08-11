@@ -1,8 +1,6 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq +zen-text-scale 0)
-
-(setq doom-theme 'doom-tomorrow-night)
+(setq doom-theme 'doom-rouge)
 
 (defvar my/custom-themes-exclude
   '(doom-acario-light
@@ -36,7 +34,7 @@
                (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
                my/custom-themes-exclude #'eq)))
 
-(setq doom-font                (font-spec :family "Iosevka" :size 22)
+(setq doom-font                (font-spec :family "Iosevka" :size 22 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 19 :weight 'light)
       doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light))
       ;; doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
@@ -56,11 +54,25 @@
     :background ,(doom-blend "#99f056" (doom-color 'bg) 0.1)))
 
 (custom-set-faces!
-  `(org-latex-and-related :foreground ,(cadr (assq 'cyan doom-themes--colors)) :weight normal))
+  `(org-latex-and-related :weight normal)
+  '(font-latex-math-face :inherit org-latex-and-related :foreground "undefined")
+  '(org-block-begin-line :extend t))
 (custom-theme-set-faces! 'doom-flatwhite
-  `(org-latex-and-related :foreground nil :background ,(cadr (assq 'fw-green-blend doom-themes--colors)) :weight normal))
+  `(org-latex-and-related :foreground nil :background ,(doom-color 'fw-green-blend)))
+(custom-set-faces!
+  '(outline-1 :weight extra-bold :height 1.35)
+  '(outline-2 :weight bold :height 1.28)
+  '(outline-3 :weight bold :height 1.20)
+  '(outline-4 :weight semi-bold :height 1.09)
+  '(outline-5 :weight semi-bold)
+  '(outline-6 :weight semi-bold)
+  '(outline-8 :weight semi-bold)
+  '(outline-9 :weight semi-bold))
 
 (setq all-the-icons-scale-factor 0.88)
+
+(custom-theme-set-faces! 'doom-rouge
+  '(hl-line :background "#171727"))
 
 (custom-set-faces!
   '(mode-line :height 110 :family "JuliaMono")
@@ -83,6 +95,35 @@
     :inherit font-lock-comment-face
     :slant normal))
 
+(defvar my/zen-enabled nil)
+
+(defun my/zen-enable ()
+  (interactive)
+  (require 'org-starless)
+  (hide-mode-line-mode +1)
+  (org-starless-mode +1)
+  (org-indent-mode -1)
+  (setq-local my/zen-enabled t
+              line-spacing 0.1
+              display-line-numbers nil))
+
+(defun my/zen-disable ()
+  (interactive)
+  (hide-mode-line-mode -1)
+  (org-starless-mode +1)
+  (org-indent-mode +1)
+  (setq-local my/zen-enabled nil
+              line-spacing 0
+              display-line-numbers t))
+
+(defun my/zen-toggle ()
+  (interactive)
+  (if my/zen-enabled
+      (my/zen-disable)
+    (my/zen-enable)))
+
+(map! :leader "t z" #'my/zen-toggle)
+
 (let ((default-directory "~/.doom.d/lisp/lib"))
   (normal-top-level-add-subdirs-to-load-path))
 (add-load-path! "lisp/lib")
@@ -98,7 +139,7 @@
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)) ;; one line at a time
       mouse-wheel-progressive-speed nil ;; don't accelerate scrolling
-      confirm-kill-emacs nil
+      scroll-margin 4
       scroll-step 1) ;; keyboard scroll one line at a time
 
 (setq-default fill-column 80)
@@ -176,17 +217,16 @@
       org-support-shift-select t
       org-hide-emphasis-markers t
       org-src-window-setup 'plain
-      org-highlight-latex-and-related '(native script))
+      org-highlight-latex-and-related '(native script)
+      org-indent-indentation-per-level 1)
 
 (push 'org-mode git-gutter:disabled-modes)
 
-(auto-fill-mode +1)
-(setq-local real-auto-save-interval 0.2)
-(turn-off-smartparens-mode)
-(turn-on-show-smartparens-mode)
-(ws-butler-mode -1)
-
-(my/org-hide-properties)
+(hercules-def
+ :show-funs '(+workspace/swap-right +workspace/swap-left)
+ :keymap 'doom-leader-workspace-map
+ :whitelist-keys '("{" "}")
+ :transient t)
 
 (setq ispell-dictionary "pt_BR,en_US"
       ispell-personal-dictionary (concat doom-private-dir ".hunspell-personal"))
@@ -194,9 +234,12 @@
 (unless (file-exists-p ispell-personal-dictionary)
   (write-region "" nil ispell-personal-dictionary nil 0))
 
-(after! ispell
-  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
-  (ispell-set-spellchecker-params))
+(setq orderless-matching-styles
+      '(orderless-initialism
+        orderless-literal
+        orderless-regexp))
+
+(setq org-roam-directory "~/Lucas/notas")
 
 (after! projectile
     (projectile-register-project-type 'julia '("Project.toml")
@@ -247,9 +290,10 @@ which `treemacs-ignore-filter' will ensure are ignored"
   (evil-tex-mode +1))
 
 (defface my-mixed-pitch-face
-  '((t :family "Overpass" :weight semilight))
+  '((t :family "Overpass" :weight light))
   "Face for `mixed-pitch-mode'")
-(setq mixed-pitch-face 'my-mixed-pitch-face)
+(setq mixed-pitch-face 'my-mixed-pitch-face
+      mixed-pitch-set-height nil)
 
 (use-package org-appear
   :hook (org-mode . org-appear-mode)
@@ -276,6 +320,10 @@ which `treemacs-ignore-filter' will ensure are ignored"
 (map! :i "C-z" 'evil-undo)
 (map! :i "C-S-z" 'evil-redo)
 (map! :i "C-x" 'evil-delete)
+
+(map! :map evil-motion-state-map
+      "j" 'evil-next-visual-line
+      "k" 'evil-previous-visual-line)
 
 (map! :map 'doom-leader-workspace-map
       "}" #'+workspace/swap-right
@@ -317,3 +365,7 @@ which `treemacs-ignore-filter' will ensure are ignored"
 (map! :map lean-mode-map "M-." 'lean-find-definition)
 
 (map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
+
+(after! ispell
+  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
+  (ispell-set-spellchecker-params))

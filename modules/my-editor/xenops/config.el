@@ -6,11 +6,11 @@
 (use-package xenops
   :commands xenops-mode
   :config
-  (require 'aio)
-  (require 'avy)
-  (require 'dash)
-  (require 'f)
-  (require 's)
+  ;; (require 'aio)
+  ;; (require 'avy)
+  ;; (require 'dash)
+  ;; (require 'f)
+  ;; (require 's)
 
   ;; (add-to-list 'xenops-elements
   ;;              '(block-math
@@ -27,6 +27,6 @@
   ;;                               xenops-element-copy
   ;;                               xenops-element-delete)))))
 
-  (setq xenops-math-image-scale-factor 1.4))
+  (setq xenops-math-image-scale-factor 1.8))
         ;; xenops-font-family "NewComputerModern Sans"
         ;; xenops-reveal-on-entry nil

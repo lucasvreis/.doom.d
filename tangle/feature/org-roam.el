@@ -1,5 +1,4 @@
 ;;; tangle/feature/org-roam.el -*- lexical-binding: t; -*-
-(setq org-roam-directory "~/Lucas/notas")
 
 (defadvice! +org-roam-reuse-windows (&rest r)
   :before #'org-roam-preview-visit

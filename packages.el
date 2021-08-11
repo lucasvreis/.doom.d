@@ -20,7 +20,7 @@
 
 (unpin! lsp-mode)
 (unpin! company-box)
-(unpin! consult)
+;; (unpin! consult)
 (unpin! doom-themes)
 (unpin! vertico)
 (unpin! treemacs)
@@ -34,8 +34,8 @@
 
 (package! org-ql)
 
+(package! org-appear)
+
 (package! hercules)
 
 (package! elcord)
-
-(package! org-appear)

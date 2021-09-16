@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: displaymath
+# uuid: displaymath
+# key: dm
+# condition: t
+# --
+\begin{displaymath}
+$1
+\end{displaymath}
+$0

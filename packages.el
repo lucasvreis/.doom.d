@@ -19,7 +19,6 @@
 (package! lsp-treemacs)
 
 (unpin! lsp-mode)
-(unpin! company-box)
 ;; (unpin! consult)
 (unpin! doom-themes)
 (unpin! vertico)
@@ -27,15 +26,18 @@
 
 (package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))
 
+(unpin! evil-tex)
+(unpin! company-math)
 (package! company-math)
 (package! math-symbol-lists)
 (package! company-math)
 (package! real-auto-save)
 
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+
 (package! org-ql)
 
-(package! org-appear)
-
-(package! hercules)
+(package! seoul256-theme)
 
 (package! elcord)

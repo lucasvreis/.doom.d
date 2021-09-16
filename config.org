@@ -12,7 +12,7 @@ Vamos usar o binding léxico:
 * Estético
 ** Tema
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-rouge)
+(setq doom-theme 'doom-moonlight)
 #+end_src
 
 *** Esconder temas
@@ -58,15 +58,18 @@ lista abaixo.
 *** Fontes
 
 #+begin_src emacs-lisp :results none
-(setq doom-font                (font-spec :family "Iosevka" :size 22 :weight 'normal)
+(setq doom-font                (font-spec :family "VictorMono Nerd Font Mono" :size 20 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 19 :weight 'light)
       doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light))
       ;; doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
 
 ;; Colocamos uma ordem de prioridade para tentar ter todos os unicodes e emojis.
-(add-hook! 'after-setting-font-hook
-  (set-fontset-font t 'unicode "JuliaMono")
+(setq use-default-font-for-symbols t)
+(defun my/adjust-fonts ()
+  (set-fontset-font t 'unicode (font-spec :family "JuliaMono" :weight 'light))
   (set-fontset-font t 'unicode "Twemoji" nil 'append))
+
+(add-hook! 'after-setting-font-hook #'my/adjust-fonts)
 #+end_src
 
 *** Código (prog)
@@ -78,30 +81,37 @@ Deixamos os comentários itálicas, e os ~keywords~ oblíquos.
   '(font-lock-keyword-face :slant oblique))
 #+end_src
 
-*** @Yasnippet
+*** Yasnippet
 #+begin_src emacs-lisp
 (custom-set-faces!
   `(yas-field-highlight-face
     :inherit nil
-    :background ,(doom-blend "#99f056" (doom-color 'bg) 0.1)))
+    :background ,(doom-blend "#b315b3" (doom-color 'bg) 0.4)
+    :foreground "undefined"))
 #+end_src
-*** @Org
+*** Org
 #+begin_src emacs-lisp :results none
 (custom-set-faces!
   `(org-latex-and-related :weight normal)
-  '(font-latex-math-face :inherit org-latex-and-related :foreground "undefined")
+  `(font-latex-math-face :inherit org-latex-and-related :foreground ,(doom-color 'fg))
   '(org-block-begin-line :extend t))
 (custom-theme-set-faces! 'doom-flatwhite
   `(org-latex-and-related :foreground nil :background ,(doom-color 'fw-green-blend)))
 (custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.35)
-  '(outline-2 :weight bold :height 1.28)
-  '(outline-3 :weight bold :height 1.20)
-  '(outline-4 :weight semi-bold :height 1.09)
+  '(outline-1 :weight extra-bold)
+  '(outline-2 :weight bold)
+  '(outline-3 :weight bold)
+  '(outline-4 :weight semi-bold)
   '(outline-5 :weight semi-bold)
   '(outline-6 :weight semi-bold)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold))
+#+end_src
+
+No terminal, a fonte =org-hide= não funciona bem.
+#+begin_src emacs-lisp
+(custom-set-faces!
+  `(org-hide :foreground ,(doom-color 'bg)))
 #+end_src
 
 *** Ícones
@@ -118,10 +128,24 @@ O tema =doom-rouge= não tem um =hl-line= distinguível...
   '(hl-line :background "#171727"))
 #+end_src
 ** Modeline
+*** Faces
+#+begin_src emacs-lisp
+(custom-set-faces!
+  '(mode-line :height 110 :family "JuliaMono")
+  '(mode-line-inactive :height 110 :family "JuliaMono")
+  '(doom-modeline-buffer-modified :foreground "#c63")
+  '(doom-modeline-info :foreground "white"))
+(setq! +modeline-height 26)
+#+end_src
+
+*** Doom-modeline
+#+begin_src emacs-lisp
+(setq doom-modeline-irc nil
+      doom-modeline-icon nil)
+#+end_src
 
 #+begin_src elisp :tangle tangle/minor/doom-modeline.el
 ;;; tangle/minor/doom-modeline.el -*- lexical-binding: t; -*-
-
 (doom-modeline-def-segment buffer-name
   "Display the current buffer's name, without any other information."
   (concat
@@ -161,13 +185,87 @@ O tema =doom-rouge= não tem um =hl-line= distinguível...
 
 #+end_src
 
+*** Mood-line :ARCHIVE:
+#+begin_src elisp :tangle packages.el
+(package! mood-line)
+#+end_src
+
 #+begin_src emacs-lisp
-(custom-set-faces!
-  '(mode-line :height 110 :family "JuliaMono")
-  '(mode-line-inactive :height 110 :family "JuliaMono")
-  '(doom-modeline-buffer-modified :foreground "#c63")
-  '(doom-modeline-info :foreground "white"))
-(setq! +modeline-height 26)
+(require 'mood-line)
+(mood-line-mode)
+#+end_src
+
+**** Problema com Olivetti.
+#+begin_src emacs-lisp
+(defun mood-line--format (left right)
+  "Return a string of `window-width' length containing LEFT and RIGHT, aligned respectively."
+  (let ((reserve (length right)))
+    (concat left
+            " "
+            (propertize " "
+                        'display `((space :align-to (- right (- 0 right-margin) ,reserve))))
+            right)))
+#+end_src
+    
+*** Simple modeline :ARCHIVE:
+#+begin_src elisp :tangle packages.el
+(package! simple-modeline)
+#+end_src
+
+#+begin_src emacs-lisp
+(require 'simple-modeline)
+
+(defun my/simple-modeline-segment-modified ()
+  "Displays a color-coded buffer modification/read-only indicator in the mode-line."
+  (if buffer-file-name
+      (let* ((read-only buffer-read-only)
+             (modified (buffer-modified-p)))
+        (if read-only
+            (concat " "
+                    (all-the-icons-octicon "lock" :face 'all-the-icons-red))
+          (propertize
+           (if modified " ●" "  ")
+           'face `(:inherit
+                   ,(if modified 'simple-modeline-status-modified
+                      (if read-only 'simple-modeline-status-error
+                        'simple-modeline-unimportant))))))))
+
+(setq simple-modeline-segments
+      '((my/simple-modeline-segment-modified
+         simple-modeline-segment-buffer-name
+         simple-modeline-segment-position)
+        (simple-modeline-segment-vc
+         simple-modeline-segment-major-mode
+         simple-modeline-segment-misc-info
+         simple-modeline-segment-process)))
+(simple-modeline-mode)
+#+end_src
+
+**** Problema com Olivetti
+#+begin_src emacs-lisp
+(defun simple-modeline--format (left-segments right-segments)
+  "Return a string of `window-width' length containing LEFT-SEGMENTS and RIGHT-SEGMENTS, aligned respectively."
+  (let* ((left (simple-modeline--format-segments left-segments))
+         (right (simple-modeline--format-segments right-segments))
+         (reserve (length right)))
+    (concat
+     left
+     (propertize " "
+                 'display `((space :align-to (- right (- 0 right-margin) ,reserve)))
+                 'face '(:inherit simple-modeline-space))
+     right)))
+#+end_src
+
+*** MLScroll (barra de rolagem na modeline) :ARCHIVE:
+#+begin_src elisp :tangle packages.el
+(package! mlscroll)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package mlscroll
+  :hook (server-after-make-frame . mlscroll-mode)
+  :config
+  (setq mlscroll-right-align nil))
 #+end_src
 
 ** Divisores de janelas
@@ -280,10 +378,13 @@ Para desabilitar as mensagens chatas:
 #+end_src
 
 ** Edição de texto
-*** Atalhos
 *** Variáveis
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
+
+(setq amalgamating-undo-limit 1)
+
+(setq gcmh-idle-delay 5)
 
 (setq company-idle-delay 0.01
       company-minimum-prefix-length 4)
@@ -371,7 +472,7 @@ Maximizar a janela ao iniciar?
 ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 #+end_src
 
-* Configurações de pacotes
+* Configurações
 ** TODO Use-packages (temporário)
 
 Primeiro, alguns pacotes configurados com o =use-package=:
@@ -428,7 +529,6 @@ Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el
 (package! lsp-treemacs)
 
 (unpin! lsp-mode)
-(unpin! company-box)
 ;; (unpin! consult)
 (unpin! doom-themes)
 (unpin! vertico)
@@ -436,6 +536,8 @@ Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el
 
 (package! benchmark-init :recipe (:host github :repo "kekeimiku/benchmark-init-el"))
 
+(unpin! evil-tex)
+(unpin! company-math)
 (package! company-math)
 (package! math-symbol-lists)
 (package! company-math)
@@ -447,11 +549,17 @@ Isso é temporário, enquanto eu não organizo o meu antigo arquivo =packages.el
 **** Variáveis
 #+begin_src emacs-lisp
 (setq org-directory "~/Lucas/org"
+      org-attach-id-dir "data/"
+      org-startup-folded t
       org-latex-packages-alist '(("" "tikz" t) ("" "tikz-cd" t))
       org-support-shift-select t
-      org-hide-emphasis-markers t
+      org-hide-emphasis-markers nil
+      org-latex-pdf-process '("%latex %f")
+      org-latex-compilers '("tectonic" "pdflatex" "xelatex" "lualatex")
+      org-latex-compiler "tectonic"
       org-src-window-setup 'plain
       org-highlight-latex-and-related '(native script)
+      org-emphasis-regexp-components '("-[:space:]('\"{" "-[:space:].,:!?;'\")}\\[" "{}*[:space:]" "." 1)
       org-indent-indentation-per-level 1)
 #+end_src
 
@@ -481,7 +589,7 @@ O =git-gutter= não funciona bem com o =org-indent-mode=:
 
 (add-to-list
  '+company-backend-alist
- '(org-mode (:separate company-math-symbols-latex company-dabbrev company-ispell company-capf)))
+ '(org-mode company-math-symbols-latex))
 
 (map! :map 'evil-org-mode-map
       :i "C-l" #'flyspell-correct-move)
@@ -543,42 +651,12 @@ slow if it has a lot of overlays."
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hook
 (my/org-hide-properties)
 #+end_src
+*** Haskell
+#+begin_src emacs-lisp
+(setq lsp-haskell-server-path "~/.local/bin/haskell-language-server-wrapper")
+#+end_src
 
 ** Features
-*** TODO Hercules
-
-O Hercules é um "Hydra automático": ele deixa alguns keymaps persistentes, até
-que uma tecla fora do keymap seja pressionada.
-
-#+begin_src elisp :tangle packages.el
-(package! hercules)
-#+end_src
-
-#+begin_src emacs-lisp
-(hercules-def
- :show-funs '(+workspace/swap-right +workspace/swap-left)
- :keymap 'doom-leader-workspace-map
- :whitelist-keys '("{" "}")
- :transient t)
-#+end_src
-
-Exemplos:
-#+begin_src emacs-lisp :tangle no
-(hercules-def
- :toggle-funs #'macrostep-mode
- :keymap 'macrostep-keymap)
- 
-(define-key <map-symbol> (kbd "<key>") #'macrostep-mode)
-
-(hercules-def
- ;; read further to see why this works
- :toggle-funs #'org-babel-mode
- :keymap 'org-babel-map
- :transient t)
- 
-;; tweak binding to taste
-(define-key org-mode-map (kbd "C-c C-v") #'org-babel-mode)
-#+end_src
 *** Ispell
 
 #+begin_src emacs-lisp
@@ -604,10 +682,11 @@ Também quero que tenha inicialismos (por exemplo, hmlm -> hide-mode-line-mode):
         orderless-literal
         orderless-regexp))
 #+end_src
-*** @Org
+*** Org
 **** Org-roam
 #+begin_src emacs-lisp
-(setq org-roam-directory "~/Lucas/notas")
+(setq org-roam-directory "~/Lucas/notas"
+      +org-roam-open-buffer-on-find-file nil)
 #+end_src
 
 #+begin_src elisp :tangle tangle/feature/org-roam.el
@@ -630,6 +709,24 @@ Também quero que tenha inicialismos (por exemplo, hmlm -> hide-mode-line-mode):
        "🢔(\\1-\\2-\\3) "
        (subst-char-in-string ?_ ?  buffer-file-name))
     (funcall orig-fun)))
+#+end_src
+
+**** Org-roam-ui
+#+begin_src elisp :tangle packages.el
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t))
 #+end_src
 
 **** TODO Org-ql
@@ -655,14 +752,18 @@ Também quero que tenha inicialismos (por exemplo, hmlm -> hide-mode-line-mode):
             (org-sidebar-refresh)))))))
 #+end_src
 .
-
-*** @Projectile
+*** Projectile
 #+begin_src emacs-lisp
 (after! projectile
     (projectile-register-project-type 'julia '("Project.toml")
                                     :project-file "Project.toml"
                                     :test "julia -e \"using Pkg; Pkg.test()\""))
 #+end_src
+*** Temas
+#+begin_src elisp :tangle packages.el
+(package! seoul256-theme)
+#+end_src
+
 
 *** Treemacs
 **** Ignorar (esconder) algumas coisas
@@ -749,6 +850,17 @@ which `treemacs-ignore-filter' will ensure are ignored"
   (centaur-tabs-group-by-projectile-project))
 #+end_src
  
+*** Company
+**** Company-box # ainda não sei se precisa :ARCHIVE:
+
+#+begin_src elisp :tangle tangle/minor/company-box.el
+;;; tangle/minor/company-box.el -*- lexical-binding: t; -*-
+(defadvice! my/company-box-ensure-window-exists (&rest _)
+  :before #'company-box--move-selection
+  (unless (get-buffer-window (company-box--get-buffer) t)
+    (company-box--set-frame (company-box--get-frame)))) ; or company-box--make-frame ?
+#+end_src
+
 *** Elcord
 
 #+begin_src elisp :tangle packages.el
@@ -762,7 +874,7 @@ which `treemacs-ignore-filter' will ensure are ignored"
       elcord-use-major-mode-as-main-icon t)
 #+end_src
 
-*** @Evil
+*** Evil
 **** Variáveis
 #+begin_src emacs-lisp
 (setq evil-shift-round nil
@@ -775,7 +887,7 @@ which `treemacs-ignore-filter' will ensure are ignored"
       evil-ex-substitute-global t)
 #+end_src
 
-**** Shift
+**** FIXME Shift (não funciona 😕)
 Eu /realmente/ quero que o shift tenha 2 espaços na linguagem elisp.
 #+begin_src elisp :tangle tangle/minor/evil.el
 ;;; tangle/minor/evil.el -*- lexical-binding: t; -*-
@@ -787,7 +899,6 @@ Eu /realmente/ quero que o shift tenha 2 espaços na linguagem elisp.
 #+end_src
 
 **** Evil-mc
-
 Multicursores com o Ctrl + clique esquerdo do mouse (como no VSCode).
 #+begin_src elisp :tangle tangle/minor/evil.el
 (defun evil-mc/toggle-cursor-on-click (event)
@@ -813,6 +924,90 @@ already there."
 (map! "C-<mouse-1>" #'evil-mc/toggle-cursor-on-click)
 #+end_src
 
+**** Objetos de texto
+***** Org headlines
+#+begin_src elisp :tangle tangle/minor/evil.el
+(defun evil-org--parse-headline ()
+  (save-excursion
+    (end-of-line)
+    (outline-previous-heading)
+    (skip-chars-forward "* \t")
+    (let* ((todo-start     (point))
+           (todo-end1      (and org-todo-regexp
+                                (let (case-fold-search) (looking-at (concat org-todo-regexp " ")))
+                                (goto-char (1- (match-end 0)))))
+           (todo-end2      (when todo-end1 (skip-chars-forward " \t") (point)))
+           (priority-start (point))
+           (priority-end   (when (looking-at "\\[#.\\][ \t]*") (goto-char (match-end 0))))
+           (_              (and (let (case-fold-search) (looking-at org-comment-string))
+                                (goto-char (match-end 0))))
+           (title-start    (point))
+           (tags-start     (when (re-search-forward "[ \t]+\\(:[[:alnum:]_@#%:]+:\\)[ \t]*$"
+                                                    (line-end-position) 'move)
+                             (goto-char (match-beginning 0))
+                             (match-beginning 1)))
+           (title-end      (point)))
+      (list todo-start todo-end1 todo-end2 priority-start
+            priority-end title-start title-end
+            tags-start (line-end-position)))))
+
+(evil-define-text-object evil-org-headline (count &optional beg end type)
+  "Select the current org heading" :jump t
+  (save-excursion
+    (end-of-line)
+    (outline-previous-heading)
+    (list (line-beginning-position) (line-end-position))))
+
+(evil-define-text-object evil-org-headline-title (c &rest _)
+  "Select the title text in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 5 parse) (nth 6 parse))))
+
+(evil-define-text-object evil-org-headline-todo (c &rest _)
+  "Select the todo entry in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 0 parse) (nth 2 parse))))
+
+(evil-define-text-object evil-org-headline-inner-todo (c &rest _)
+  "Select the inner todo entry in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 0 parse) (nth 1 parse))))
+
+(evil-define-text-object evil-org-headline-priority (c &rest _)
+  "Select the priority entry in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 3 parse) (nth 4 parse))))
+
+(evil-define-text-object evil-org-headline-tags (c &rest _)
+  "Select the tags in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 6 parse) (nth 8 parse))))
+
+(evil-define-text-object evil-org-headline-inner-priority (c &rest r)
+  "Select the inner part of priority in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (when (nth 4 parse)
+      (let ((p (+ 2 (nth 3 parse)))) (list p (1+ p))))))
+
+(evil-define-text-object evil-org-headline-inner-tags (c &rest _)
+  "Select the inner part of tags in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (when (nth 7 parse)
+      (list (1+ (nth 7 parse)) (1- (nth 8 parse))))))
+
+(map! :map 'evil-inner-text-objects-map
+      "h h" #'evil-org-headline-title
+      "h t" #'evil-org-headline-inner-todo
+      "h p" #'evil-org-headline-inner-priority
+      "h a" #'evil-org-headline-inner-tags)
+
+(map! :map 'evil-outer-text-objects-map
+      "h h" #'evil-org-headline
+      "h t" #'evil-org-headline-todo
+      "h p" #'evil-org-headline-priority
+      "h a" #'evil-org-headline-tags)
+#+end_src
+
 *** Flyspell
 
 Vamos deixá-lo menos preguiçoso: @performance
@@ -826,6 +1021,12 @@ Com o =flyspell-correct=, vamos adicionar alguns atalhos:
 #+begin_src emacs-lisp
 (map! :ni "C-." #'flyspell-correct-move)
 #+end_src
+*** Focus
+#+begin_src emacs-lisp
+(setq focus-fraction 0.7)
+(custom-set-faces!
+  '(focus-unfocused :inherit custom-comment-tag :foreground "gray"))
+#+end_src
 
 *** Iedit
 
@@ -835,7 +1036,7 @@ Desativa uma mensagem chata quando apertamos =M-d=
 (setq iedit-toggle-key-default nil)
 #+end_src
 
-*** @Lisps
+*** Lisps
 **** Parinfer
 
  - =paren= Mode gives you full control of parens, while Parinfer corrects
@@ -857,7 +1058,7 @@ NOTE TO SELF: =smart= and =indent= won't allow inserting unmached }
 *** Mamimo
 
 #+begin_src emacs-lisp
-(setq mamimo-greek-abbrevs-prefix "'")
+(setq mamimo-greek-abbrevs-prefix ";")
 (add-hook! 'mamimo-mode-hook
   (evil-tex-mode +1))
 #+end_src
@@ -872,8 +1073,8 @@ NOTE TO SELF: =smart= and =indent= won't allow inserting unmached }
       mixed-pitch-set-height nil)
 #+end_src
 
-*** @Org
-**** Org-appear
+*** Org
+**** Org-appear :ARCHIVE:
 
 Faz os elementos de markup desaparecerem automaticamente.
 
@@ -894,6 +1095,21 @@ Faz os elementos de markup desaparecerem automaticamente.
 (vertico-reverse-mode +1)
 (setq vertico-resize t
       vertico-count 10)
+#+end_src
+*** Yasnippet
+**** Movimentos entre campos
+Uma dessas coisas que se imagina, por que não fizeram assim?
+
+#+begin_src elisp :tangle tangle/minor/yasnippet.el
+;;; tangle/minor/yasnippet.el -*- lexical-binding: t; -*-
+(defun yas--maybe-move-to-active-field (snippet)
+  "Try to move to SNIPPET's active (or first) field and return it if found."
+  (let ((target-field (or (yas--snippet-active-field snippet)
+                          (car (yas--snippet-fields snippet)))))
+    (when target-field
+      (yas--move-to-field snippet target-field)
+      (goto-char (yas--field-end target-field))
+      target-field)))
 #+end_src
 
 ** Carregar
@@ -917,16 +1133,20 @@ depois do módulo de mesmo nome ser carregado (com a função =after!=).
 #+end_src
 
 * Atalhos de teclado
-** TODO Implementar o atalho =C-l= no insert state
-** TODO Fazer o binding =SPC s I= abrir a sessão com narrowing
-
+** Fazer o binding =SPC s I= abrir a sessão com narrowing
+#+begin_src emacs-lisp
+(map! :mode 'org-mode
+      :map 'doom-leader-search-map
+      "I" (cmd! (funcall-interactively (key-binding " si"))
+                (org-tree-to-indirect-buffer)))
+#+end_src
 
 ** Comandos familiares
 
 Porque ninguém merece tantos atalhos diferentes.
 
 #+begin_src emacs-lisp
-(map! "C-S-s" 'isearch-forward)
+;; (map! "C-S-s" 'isearch-forward)
 (map! :egni "C-s" 'save-buffer)
 (map! :egni "C-/" 'evilnc-comment-or-uncomment-lines)
 
@@ -940,14 +1160,9 @@ Porque ninguém merece tantos atalhos diferentes.
 #+begin_src emacs-lisp
 (map! :map evil-motion-state-map
       "j" 'evil-next-visual-line
-      "k" 'evil-previous-visual-line)
-#+end_src
-
-** Workspaces
-#+begin_src emacs-lisp
-(map! :map 'doom-leader-workspace-map
-      "}" #'+workspace/swap-right
-      "{" #'+workspace/swap-left)
+      "k" 'evil-previous-visual-line
+      "<down>" 'evil-next-visual-line
+      "<up>" 'evil-previous-visual-line)
 #+end_src
 
 ** Evil ABNT :ARCHIVE:
@@ -1004,7 +1219,7 @@ desperdiçar a oportunidade de usar =jklç=:
       "ç"      #'treemacs-RET-action)
 #+end_src
 
-** TODO Hydras (mudar para hercules)
+** Hydras
 Uma história antiga.
 
 Não gosto do estilo do pop up
@@ -1016,8 +1231,17 @@ Tamanho da janela
 #+begin_src emacs-lisp
 (defhydra window-height-hydra (evil-window-map)
   "window height"
-  ("=" evil-window-increase-height "increase")
-  ("-" evil-window-decrease-height "decrease"))
+  ("=" evil-window-increase-height "")
+  ("-" evil-window-decrease-height "")
+  (">" evil-window-increase-width "")
+  ("<" evil-window-decrease-width ""))
+
+(defhydra workspace-hydra (doom-leader-workspace-map)
+  "workspace"
+  ("]" +workspace/switch-right "")
+  ("[" +workspace/switch-left "")
+  ("}" +workspace/swap-right "")
+  ("{" +workspace/swap-left ""))
 #+end_src
 
 ** Kitty (Terminal)

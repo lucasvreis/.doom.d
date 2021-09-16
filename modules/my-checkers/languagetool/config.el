@@ -9,7 +9,8 @@
   (add-hook! org-indent-mode
     (setq flycheck-indication-mode (if org-indent-mode nil 'left-fringe)))
 
-  (add-hook! flyspell-mode
+  (defun activate-languagetool ()
+    (interactive)
     (when (apply #'derived-mode-p lsp-ltex-active-modes)
       (if flyspell-mode
           (progn
@@ -23,7 +24,7 @@
 
   (setq lsp-ltex-enabled nil
         lsp-ltex-enabled-rules (json-parse-string "{\"pt-BR\": [\"POR_QUE_PORQUE\"]}")
-        lsp-ltex-disabled-rules (json-parse-string "{\"pt-BR\": [\"HUNSPELL_RULE\"]}")
+        lsp-ltex-disabled-rules (json-parse-string "{\"pt-BR\": [\"HUNSPELL_RULE\", \"INTERROGATIVES_PUNTUATION\"]}")
         lsp-ltex-additional-rules-word-2-vec-model "/usr/share/word2vec"
         lsp-ltex-dictionary (json-parse-string "{\"pt-BR\": [\"Dummy\"]}")
         lsp-ltex-language "pt-BR"

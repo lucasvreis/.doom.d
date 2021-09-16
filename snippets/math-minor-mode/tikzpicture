@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: tikzpicture
+# uuid: tikzpicture
+# key: tikz
+# condition: t
+# --
+\begin{tikzpicture}
+    $1
+\end{tikzpicture}
+$0

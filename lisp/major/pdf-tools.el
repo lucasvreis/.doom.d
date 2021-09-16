@@ -21,14 +21,6 @@
 (advice-add 'pdf-view-shrink :after (lambda (_) (pdf-tools-center-page)))
 (advice-add 'pdf-view-enlarge :after (lambda (_) (pdf-tools-center-page)))
 
-(map! :map pdf-view-mode-map
-      :n "h" #'pdf-tools-center-page
-      :n "j" #'image-backward-hscroll
-      :n "k" #'evil-collection-pdf-view-next-line-or-next-page
-      :n "l" #'evil-collection-pdf-view-previous-line-or-previous-page
-      :n "ç" #'image-forward-hscroll
-      :n "C-k" #'pdf-view-next-page-command
-      :n "C-l" #'pdf-view-previous-page-command)
 
 (after! doom-themes
   (setq pdf-view-midnight-colors (cons (cadr (assq 'fg doom-themes--colors)) (cadr (assq 'bg doom-themes--colors)))))

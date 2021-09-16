@@ -1,7 +1,1 @@
-* Inbox
-** TODO aaaaaaa
-
-[[file:~/.doom.d/config.org:::PROPERTIES:]]
-** TODO aaaaaaaa
-
-[[file:~/.doom.d/config.org:::PROPERTIES:]]
+* M

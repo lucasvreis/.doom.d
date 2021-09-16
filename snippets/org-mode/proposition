@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: proposition
+# uuid: proposition
+# key: prop
+# condition: t
+# --
+#+begin_proposition
+$1
+#+end_proposition
+
+$0

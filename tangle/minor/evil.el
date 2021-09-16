@@ -26,3 +26,83 @@ already there."
               (evil-mc-make-cursor-here)))))))
 (map! "C-<down-mouse-1>" nil)
 (map! "C-<mouse-1>" #'evil-mc/toggle-cursor-on-click)
+
+(defun evil-org--parse-headline ()
+  (save-excursion
+    (end-of-line)
+    (outline-previous-heading)
+    (skip-chars-forward "* \t")
+    (let* ((todo-start     (point))
+           (todo-end1      (and org-todo-regexp
+                                (let (case-fold-search) (looking-at (concat org-todo-regexp " ")))
+                                (goto-char (1- (match-end 0)))))
+           (todo-end2      (when todo-end1 (skip-chars-forward " \t") (point)))
+           (priority-start (point))
+           (priority-end   (when (looking-at "\\[#.\\][ \t]*") (goto-char (match-end 0))))
+           (_              (and (let (case-fold-search) (looking-at org-comment-string))
+                                (goto-char (match-end 0))))
+           (title-start    (point))
+           (tags-start     (when (re-search-forward "[ \t]+\\(:[[:alnum:]_@#%:]+:\\)[ \t]*$"
+                                                    (line-end-position) 'move)
+                             (goto-char (match-beginning 0))
+                             (match-beginning 1)))
+           (title-end      (point)))
+      (list todo-start todo-end1 todo-end2 priority-start
+            priority-end title-start title-end
+            tags-start (line-end-position)))))
+
+(evil-define-text-object evil-org-headline (count &optional beg end type)
+  "Select the current org heading" :jump t
+  (save-excursion
+    (end-of-line)
+    (outline-previous-heading)
+    (list (line-beginning-position) (line-end-position))))
+
+(evil-define-text-object evil-org-headline-title (c &rest _)
+  "Select the title text in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 5 parse) (nth 6 parse))))
+
+(evil-define-text-object evil-org-headline-todo (c &rest _)
+  "Select the todo entry in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 0 parse) (nth 2 parse))))
+
+(evil-define-text-object evil-org-headline-inner-todo (c &rest _)
+  "Select the inner todo entry in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 0 parse) (nth 1 parse))))
+
+(evil-define-text-object evil-org-headline-priority (c &rest _)
+  "Select the priority entry in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 3 parse) (nth 4 parse))))
+
+(evil-define-text-object evil-org-headline-tags (c &rest _)
+  "Select the tags in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (list (nth 6 parse) (nth 8 parse))))
+
+(evil-define-text-object evil-org-headline-inner-priority (c &rest r)
+  "Select the inner part of priority in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (when (nth 4 parse)
+      (let ((p (+ 2 (nth 3 parse)))) (list p (1+ p))))))
+
+(evil-define-text-object evil-org-headline-inner-tags (c &rest _)
+  "Select the inner part of tags in the current org heading" :jump t
+  (let ((parse (evil-org--parse-headline)))
+    (when (nth 7 parse)
+      (list (1+ (nth 7 parse)) (1- (nth 8 parse))))))
+
+(map! :map 'evil-inner-text-objects-map
+      "h h" #'evil-org-headline-title
+      "h t" #'evil-org-headline-inner-todo
+      "h p" #'evil-org-headline-inner-priority
+      "h a" #'evil-org-headline-inner-tags)
+
+(map! :map 'evil-outer-text-objects-map
+      "h h" #'evil-org-headline
+      "h t" #'evil-org-headline-todo
+      "h p" #'evil-org-headline-priority
+      "h a" #'evil-org-headline-tags)

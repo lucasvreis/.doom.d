@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: equation
+# uuid: equation
+# key: eq
+# condition: (not (texmathp))
+# expand-env: ((yas-indent-line 'fixed))
+# --
+\begin{equation*}
+  $1
+\end{equation*}
+$0

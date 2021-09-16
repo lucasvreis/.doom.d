@@ -17,7 +17,7 @@
 
 (add-to-list
  '+company-backend-alist
- '(org-mode (:separate company-math-symbols-latex company-dabbrev company-ispell company-capf)))
+ '(org-mode company-math-symbols-latex))
 
 (map! :map 'evil-org-mode-map
       :i "C-l" #'flyspell-correct-move)

@@ -1,6 +1,6 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq doom-theme 'doom-rouge)
+(setq doom-theme 'doom-moonlight)
 
 (defvar my/custom-themes-exclude
   '(doom-acario-light
@@ -34,15 +34,18 @@
                (seq-filter (lambda (x) (s-prefix? "doom-" (symbol-name x))) l)
                my/custom-themes-exclude #'eq)))
 
-(setq doom-font                (font-spec :family "Iosevka" :size 22 :weight 'normal)
+(setq doom-font                (font-spec :family "VictorMono Nerd Font Mono" :size 20 :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 19 :weight 'light)
       doom-serif-font          (font-spec :family "IBM Plex Mono" :weight 'light))
       ;; doom-unicode-font        (font-spec :family "JuliaMono" :weight 'normal))
 
 ;; Colocamos uma ordem de prioridade para tentar ter todos os unicodes e emojis.
-(add-hook! 'after-setting-font-hook
-  (set-fontset-font t 'unicode "JuliaMono")
+(setq use-default-font-for-symbols t)
+(defun my/adjust-fonts ()
+  (set-fontset-font t 'unicode (font-spec :family "JuliaMono" :weight 'light))
   (set-fontset-font t 'unicode "Twemoji" nil 'append))
+
+(add-hook! 'after-setting-font-hook #'my/adjust-fonts)
 
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
@@ -51,23 +54,27 @@
 (custom-set-faces!
   `(yas-field-highlight-face
     :inherit nil
-    :background ,(doom-blend "#99f056" (doom-color 'bg) 0.1)))
+    :background ,(doom-blend "#b315b3" (doom-color 'bg) 0.4)
+    :foreground "undefined"))
 
 (custom-set-faces!
   `(org-latex-and-related :weight normal)
-  '(font-latex-math-face :inherit org-latex-and-related :foreground "undefined")
+  `(font-latex-math-face :inherit org-latex-and-related :foreground ,(doom-color 'fg))
   '(org-block-begin-line :extend t))
 (custom-theme-set-faces! 'doom-flatwhite
   `(org-latex-and-related :foreground nil :background ,(doom-color 'fw-green-blend)))
 (custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.35)
-  '(outline-2 :weight bold :height 1.28)
-  '(outline-3 :weight bold :height 1.20)
-  '(outline-4 :weight semi-bold :height 1.09)
+  '(outline-1 :weight extra-bold)
+  '(outline-2 :weight bold)
+  '(outline-3 :weight bold)
+  '(outline-4 :weight semi-bold)
   '(outline-5 :weight semi-bold)
   '(outline-6 :weight semi-bold)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold))
+
+(custom-set-faces!
+  `(org-hide :foreground ,(doom-color 'bg)))
 
 (setq all-the-icons-scale-factor 0.88)
 
@@ -80,6 +87,9 @@
   '(doom-modeline-buffer-modified :foreground "#c63")
   '(doom-modeline-info :foreground "white"))
 (setq! +modeline-height 26)
+
+(setq doom-modeline-irc nil
+      doom-modeline-icon nil)
 
 (setq window-divider-default-bottom-width 2   ; default is 1
       window-divider-default-right-width  2)  ; default is 1
@@ -143,6 +153,10 @@
       scroll-step 1) ;; keyboard scroll one line at a time
 
 (setq-default fill-column 80)
+
+(setq amalgamating-undo-limit 1)
+
+(setq gcmh-idle-delay 5)
 
 (setq company-idle-delay 0.01
       company-minimum-prefix-length 4)
@@ -213,20 +227,22 @@
   :hook ((org-mode latex-mode markdown-mode) . mamimo-mode))
 
 (setq org-directory "~/Lucas/org"
+      org-attach-id-dir "data/"
+      org-startup-folded t
       org-latex-packages-alist '(("" "tikz" t) ("" "tikz-cd" t))
       org-support-shift-select t
-      org-hide-emphasis-markers t
+      org-hide-emphasis-markers nil
+      org-latex-pdf-process '("%latex %f")
+      org-latex-compilers '("tectonic" "pdflatex" "xelatex" "lualatex")
+      org-latex-compiler "tectonic"
       org-src-window-setup 'plain
       org-highlight-latex-and-related '(native script)
+      org-emphasis-regexp-components '("-[:space:]('\"{" "-[:space:].,:!?;'\")}\\[" "{}*[:space:]" "." 1)
       org-indent-indentation-per-level 1)
 
 (push 'org-mode git-gutter:disabled-modes)
 
-(hercules-def
- :show-funs '(+workspace/swap-right +workspace/swap-left)
- :keymap 'doom-leader-workspace-map
- :whitelist-keys '("{" "}")
- :transient t)
+(setq lsp-haskell-server-path "~/.local/bin/haskell-language-server-wrapper")
 
 (setq ispell-dictionary "pt_BR,en_US"
       ispell-personal-dictionary (concat doom-private-dir ".hunspell-personal"))
@@ -234,12 +250,27 @@
 (unless (file-exists-p ispell-personal-dictionary)
   (write-region "" nil ispell-personal-dictionary nil 0))
 
+(after! ispell
+  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
+  (ispell-set-spellchecker-params))
+
 (setq orderless-matching-styles
       '(orderless-initialism
         orderless-literal
         orderless-regexp))
 
-(setq org-roam-directory "~/Lucas/notas")
+(setq org-roam-directory "~/Lucas/notas"
+      +org-roam-open-buffer-on-find-file nil)
+
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t))
 
 (after! projectile
     (projectile-register-project-type 'julia '("Project.toml")
@@ -281,11 +312,15 @@ which `treemacs-ignore-filter' will ensure are ignored"
 
 (map! :ni "C-." #'flyspell-correct-move)
 
+(setq focus-fraction 0.7)
+(custom-set-faces!
+  '(focus-unfocused :inherit custom-comment-tag :foreground "gray"))
+
 (setq iedit-toggle-key-default nil)
 
 (setq parinfer-rust-preferred-mode "indent")
 
-(setq mamimo-greek-abbrevs-prefix "'")
+(setq mamimo-greek-abbrevs-prefix ";")
 (add-hook! 'mamimo-mode-hook
   (evil-tex-mode +1))
 
@@ -294,11 +329,6 @@ which `treemacs-ignore-filter' will ensure are ignored"
   "Face for `mixed-pitch-mode'")
 (setq mixed-pitch-face 'my-mixed-pitch-face
       mixed-pitch-set-height nil)
-
-(use-package org-appear
-  :hook (org-mode . org-appear-mode)
-  :config
-  (setq org-appear-autolinks nil))
 
 (dolist (type '(major minor features))
   (let ((folder (format "~/.doom.d/lisp/%s/" type)))
@@ -312,7 +342,12 @@ which `treemacs-ignore-filter' will ensure are ignored"
       (let ((f (file-name-sans-extension (file-name-nondirectory file))))
         (eval `(after! ,(intern f) (load! ,f ,folder)))))))
 
-(map! "C-S-s" 'isearch-forward)
+(map! :mode 'org-mode
+      :map 'doom-leader-search-map
+      "I" (cmd! (funcall-interactively (key-binding " si"))
+                (org-tree-to-indirect-buffer)))
+
+;; (map! "C-S-s" 'isearch-forward)
 (map! :egni "C-s" 'save-buffer)
 (map! :egni "C-/" 'evilnc-comment-or-uncomment-lines)
 
@@ -323,18 +358,25 @@ which `treemacs-ignore-filter' will ensure are ignored"
 
 (map! :map evil-motion-state-map
       "j" 'evil-next-visual-line
-      "k" 'evil-previous-visual-line)
-
-(map! :map 'doom-leader-workspace-map
-      "}" #'+workspace/swap-right
-      "{" #'+workspace/swap-left)
+      "k" 'evil-previous-visual-line
+      "<down>" 'evil-next-visual-line
+      "<up>" 'evil-previous-visual-line)
 
 (setq hydra-is-helpful nil)
 
 (defhydra window-height-hydra (evil-window-map)
   "window height"
-  ("=" evil-window-increase-height "increase")
-  ("-" evil-window-decrease-height "decrease"))
+  ("=" evil-window-increase-height "")
+  ("-" evil-window-decrease-height "")
+  (">" evil-window-increase-width "")
+  ("<" evil-window-decrease-width ""))
+
+(defhydra workspace-hydra (doom-leader-workspace-map)
+  "workspace"
+  ("]" +workspace/switch-right "")
+  ("[" +workspace/switch-left "")
+  ("}" +workspace/swap-right "")
+  ("{" +workspace/swap-left ""))
 
 (map! :prefix-map ("\x80" . "kitty C map")
       :map 'key-translation-map
@@ -365,7 +407,3 @@ which `treemacs-ignore-filter' will ensure are ignored"
 (map! :map lean-mode-map "M-." 'lean-find-definition)
 
 (map! :map TeX-mode-map "C-S-s" 'TeX-command-run-all)
-
-(after! ispell
-  (ispell-hunspell-add-multi-dic "pt_BR,en_US")
-  (ispell-set-spellchecker-params))

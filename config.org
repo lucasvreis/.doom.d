@@ -381,7 +381,7 @@ Para desabilitar as mensagens chatas:
 *** Variáveis
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
-
+(setq safe-local-variable-values '((org-export-allow-bind-keywords . t)))
 (setq amalgamating-undo-limit 1)
 
 (setq gcmh-idle-delay 5)
@@ -858,7 +858,7 @@ which `treemacs-ignore-filter' will ensure are ignored"
 (defadvice! my/company-box-ensure-window-exists (&rest _)
   :before #'company-box--move-selection
   (unless (get-buffer-window (company-box--get-buffer) t)
-    (company-box--set-frame (company-box--get-frame)))) ; or company-box--make-frame ?
+    (company-box--set-frame (company-box--make-frame)))) ; or company-box--make-frame ?
 #+end_src
 
 *** Elcord

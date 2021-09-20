@@ -153,7 +153,7 @@
       scroll-step 1) ;; keyboard scroll one line at a time
 
 (setq-default fill-column 80)
-
+(setq safe-local-variable-values '((org-export-allow-bind-keywords . t)))
 (setq amalgamating-undo-limit 1)
 
 (setq gcmh-idle-delay 5)

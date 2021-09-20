@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: minussign
-# binding: -
-# condition: (texmathp)
-# --
-`(if (memq (char-before) '(?- ?{ ?  ?$ ?^ ?_ ?, ?< ?> ?( ?[ )) "-" " - ")`$0
